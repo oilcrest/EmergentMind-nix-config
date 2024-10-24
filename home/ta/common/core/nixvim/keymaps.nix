@@ -16,13 +16,6 @@
     #    "l" Insert, command-line and lang-arg mode
     #    "c" Command-line mode
     keymaps = [
-      # TODO: nixvim: Test sudo save
-      # {
-      #   # sudo save
-      #   mode= ["c"];
-      #   key = "w!!";
-      #   action = "<cmd>w !sudo tee > /dev/null %<CR>";
-      # }
       #
       # ========== Nixvim Config Shortcuts ==========
       #
@@ -45,6 +38,7 @@
       #     noremap = true;
       #  };
       #}
+
       #
       # ======== Movement ========
       #
@@ -124,6 +118,19 @@
         };
       }
       #
+      # =========== sudo Save =========
+      #
+      {
+        mode = [ "c" ];
+        key = "w!!";
+        action = "<cmd>w !sudo tee > /dev/null %<CR>";
+        options = {
+          desc = "Performs `sudo save` on privleged files";
+          noremap = true;
+        };
+      }
+
+      #
       # =========== Undo and Redo =========
       #
       {
@@ -162,7 +169,9 @@
           noremap = true;
         };
       }
+      #
       # ========= Twiggy =============
+      #
       {
         mode = [ "n" ];
         key = "<Leader>tw";
