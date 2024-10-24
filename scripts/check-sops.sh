@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# FIXME: Make this better
+#FIXME:(sops) Make this better
 sops_result=$(journalctl --no-pager --no-hostname --since "10 minutes ago" |
 	tac |
 	awk '!flag; /Starting sops-nix activation/{flag = 1};' |

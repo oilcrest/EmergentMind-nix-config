@@ -31,7 +31,7 @@
     preferXdgDirectories = true; # whether to make programs use XDG directories whenever supported
 
   };
-  #TODO: maybe move this to its own xdg.nix?
+  #TODO:(xdg) maybe move this to its own xdg.nix?
   # xdg packages are pulled in below
   xdg = {
     enable = true;

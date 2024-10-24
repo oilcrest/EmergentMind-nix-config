@@ -11,7 +11,7 @@ let
   secretsDirectory = builtins.toString inputs.nix-secrets;
   secretsFile = "${secretsDirectory}/secrets.yaml";
 
-  # FIXME: Switch to a configLib function
+  # FIXME:(configLib) Switch to a configLib function
   homeDirectory =
     if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in
@@ -66,8 +66,8 @@ in
   };
   # The containing folders are created as root and if this is the first ~/.config/ entry,
   # the ownership is busted and home-manager can't target because it can't write into .config...
-  # FIXME: We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
-  system.activationScripts.sopsSetAgeKeyOwnwership =
+  # FIXME:(sops) We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
+  system.activationScripts.sopsSetAgeKeyOwnership =
     let
       ageFolder = "${homeDirectory}/.config/sops/age";
       user = config.users.users.${configVars.username}.name;

@@ -58,7 +58,7 @@ in
   programs.ssh = {
     enable = true;
 
-    # FIXME: This should probably be for git systems only?
+    # FIXME:(ssh) This should probably be for git systems only?
     controlMaster = "auto";
     controlPath = "~/.ssh/sockets/S.%r@%h:%p";
     controlPersist = "10m";

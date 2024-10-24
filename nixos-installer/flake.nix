@@ -21,7 +21,7 @@
         configVars = minimalConfigVars;
       };
 
-      # FIXME: Specify arch eventually probably
+      # FIXME:(installer) Specify arch eventually probably
       # This mkHost is way better: https://github.com/linyinfeng/dotfiles/blob/8785bdb188504cfda3daae9c3f70a6935e35c4df/flake/hosts.nix#L358
       newConfig =
         name: disk: withSwap: swapSize:

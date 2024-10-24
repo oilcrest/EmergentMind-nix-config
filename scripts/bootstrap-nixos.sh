@@ -274,7 +274,7 @@ function setup_luks_secondary_drive_decryption() {
 }
 
 # Validate required options
-# FIXME: The ssh key and destination aren't required if only rekeying, so could be moved into specific sections?
+# FIXME:(bootstrap) The ssh key and destination aren't required if only rekeying, so could be moved into specific sections?
 if [ -z "${target_hostname}" ] || [ -z "${target_destination}" ] || [ -z "${ssh_key}" ]; then
 	red "ERROR: -n, -d, and -k are all required"
 	echo
@@ -326,9 +326,9 @@ if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $targe
 
 	if yes_or_no "Do you want to rebuild immediately?"; then
 		green "Rebuilding nix-config on $target_hostname"
-		#FIXME there are still a gitlab fingerprint request happening during the rebuild
+		#FIXME:(bootstrap) there are still a gitlab fingerprint request happening during the rebuild
 		$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
-		# FIXME: This fails because `just rebuild` tries to run `nix flake update nix-secrets` but the flake registry doesn't exist yet
+		#FIXME:(bootstrap) This fails because `just rebuild` tries to run `nix flake update nix-secrets` but the flake registry doesn't exist yet
 		# $ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
 	fi
 else
@@ -339,7 +339,7 @@ else
 	echo "just sync $target_user $target_destination"
 	echo "To rebuild, sign into $target_hostname and run the following command from ~/nix-config"
 	echo "cd nix-config"
-	# see above FIXME
+	# see above FIXME:(bootstrap)
 	echo "sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
 	# echo "just rebuild"
 	echo

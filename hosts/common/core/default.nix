@@ -9,7 +9,7 @@
 }:
 let
 
-  #FIXME: switch this and other isntances to configLib function
+  #FIXME:(configLib) switch this and other instances to configLib function
   homeDirectory =
     if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in

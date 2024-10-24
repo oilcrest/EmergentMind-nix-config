@@ -50,7 +50,6 @@
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/hyprland.nix" # window manager
       "hosts/common/optional/thunar.nix" # file manager
-      "hosts/common/optional/wayland.nix" # wayland components and pkgs not avaialble in home-manager
     ])
     #################### Ghost specific####################
     ./samba.nix
@@ -98,7 +97,7 @@
     cryptvms UUID=ce5f47f8-d5df-4c96-b2a8-766384780a91 /luks-secondary-unlock.key
   '';
 
-  #TODO: move this stuff to separate file but define theme itself per host
+  #TODO:(stylix) move this stuff to separate file but define theme itself per host
   # host-wide styling
   stylix = {
     enable = true;

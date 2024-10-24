@@ -1,13 +1,13 @@
 { pkgs, ... }:
 let
-  # FIXME: That should use config options and just reference whatever is configured as the default
+  # FIXME:(xdg) That should use config options and just reference whatever is configured as the default
   browser = [ "firefox.desktop" ];
   editor = [ "nvim.desktop" ];
   media = [ "vlc.desktop" ];
   writer = [ "libreoffic-writer.desktop" ];
   spreadsheet = [ "libreoffice-calc.desktop" ];
   slidedeck = [ "libreoffice-impress.desktop" ];
-  # Extensive list of assocations here:
+  # Extensive list of associations here:
   # https://github.com/iggut/GamiNiX/blob/8070528de419703e13b4d234ef39f05966a7fafb/system/desktop/home-main.nix#L77
   associations = {
     "text/*" = editor;
