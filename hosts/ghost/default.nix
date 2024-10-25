@@ -50,6 +50,7 @@
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/hyprland.nix" # window manager
       "hosts/common/optional/thunar.nix" # file manager
+      "hosts/common/optional/wayland.nix" # wayland components and pkgs not available in home-manager
     ])
     #################### Ghost specific####################
     ./samba.nix
