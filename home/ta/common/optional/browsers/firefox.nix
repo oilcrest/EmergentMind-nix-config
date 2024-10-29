@@ -9,7 +9,7 @@ in
   # - https://github.com/lucidph3nx/nixos-config/blob/2e42a40cc8d93c25e01dcbe0dacd8de01f4f0c16/modules/home-manager/firefox/default.nix
   # - https://github.com/Kreyren/nixos-config/blob/bd4765eb802a0371de7291980ce999ccff59d619/nixos/users/kreyren/home/modules/web-browsers/firefox/firefox.nix#L116-L148
   #
-  # TODO:
+  # TODO:(firefox)
   # - How to set DDG as default?
   # - Tons of settings above I haven't looked into
   # - Go over existing profiles to add settings
@@ -65,7 +65,7 @@ in
             #(extension "user-agent-switcher" "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}") # failed
 
             # Privacy / Security
-            (extension "noscript" "{73a6fe31-595d-460b-a920-fcc0f8843232}") # failed
+            (extension "noscript" "{73a6fe31-595d-460b-a920-fcc0f8843232}")
             (extension "ublock-origin" "uBlock0@raymondhill.net")
             (extension "ignore-cookies" "jid1-KKzOGWgsW3Ao4Q@jetpack") # failed # Ignore cookie setting pop-ups
             (extension "proton-pass" "78272b6fa58f4a1abaac99321d503a20@proton.me")
@@ -82,12 +82,13 @@ in
             #(extension "rango" "rango@david-tejada")
 
             # Misc
+            (extension "s3download-statusbar" "{6913849f-c79f-4f3e-83e4-890d91ad6154}")
             (extension "auto-tab-discard" "{c2c003ee-bd69-42a2-b0e9-6f34222cb046}")
             (extension "reddit-enhancement-suite" "jid1-xUfzOsOFlzSOXg@jetpack")
           ]
         )
         // {
-          # FIXME(firefox): Check into how this works
+          # FIXME:(firefox) Check into how this works
           #"*" = {
           #  installation_mode = "blocked";
           #  blocked_install_message = "blocked extension install";
@@ -103,7 +104,7 @@ in
       name = "EmergentMind";
       isDefault = true;
 
-      # FIXME(firefox): These should probably be in a let .. in block so I can re-use if I setup
+      # FIXME:(firefox) These should probably be in a let .. in block so I can re-use if I setup
       # additional profiles
       # Should check ~/.mozilla/firefox/PROFILE_NAME/prefs.js | user.js
       # from your old profiles too
