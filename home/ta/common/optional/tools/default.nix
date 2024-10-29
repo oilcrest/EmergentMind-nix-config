@@ -9,11 +9,11 @@
 
       # Device imaging
       rpi-imager
-      #etcher #was disabled in nixpkgs due to depency on insecure version of Electron
+      #etcher #was disabled in nixpkgs due to dependency on insecure version of Electron
 
       # Productivity
       grimblast
-      drawio
+      #drawio #temporarily moved to stable because of build issue waiting for lock on this package for 20+mins
       libreoffice
 
       # Privacy
@@ -29,9 +29,12 @@
       gimp
       inkscape
       obs-studio
-
       # VM and RDP
       # remmina
+      ;
+
+    inherit (pkgs.stable)
+      drawio
       ;
   };
   #Disabled for now. grimblast
