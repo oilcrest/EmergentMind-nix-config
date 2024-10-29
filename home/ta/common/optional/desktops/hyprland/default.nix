@@ -18,7 +18,7 @@
     systemd = {
       enable = true;
       variables = [ "--all" ]; # fix for https://wiki.hyprland.org/Nix/Hyprland-on-Home-Manager/#programs-dont-work-in-systemd-services-but-do-on-the-terminal
-      # TODO: experiment with whether this is required.
+      # TODO:(hyprland) experiment with whether this is required.
       # Same as default, but stop the graphical session too
       extraCommands = lib.mkBefore [
         "systemctl --user stop graphical-session.target"
@@ -61,10 +61,10 @@
         ) (config.monitors)
       );
 
-      #FIXME adapt this to work with new monitor module
+      #FIXME:(hyprland) adapt this to work with new monitor module
       workspace = [
         "1, monitor:DP-1, default:true, persistent:true"
-        "10, monitor:DP-1, default:true" # HACK to workaround finicky bs
+        "10, monitor:DP-1, default:true" # HACK: to workaround finicky bs
         "3, monitor:DP-1, default:true"
         "4, monitor:DP-1, default:true"
         "5, monitor:DP-1, default:true"
@@ -145,10 +145,13 @@
       # To determine path, run `which foo`
       exec-once = [
         ''${pkgs.waypaper}/bin/waypaper --restore''
-        ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
+        ''[workspace 8 silent]${pkgs.virt-manager}/bin/virt-manager''
+        ''[workspace 8 silent]${pkgs.obsidian}/bin/obsidian''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
         ''[workspace 9 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
+        ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
         ''[workspace 0 silent]${pkgs.spotify}/bin/spotify''
+        ''[workspace special silent]${pkgs.keymapp}/bin/keymapp''
       ];
       #
       # ========== Layer Rules ==========
@@ -172,79 +175,65 @@
         "float, title:^(Library)(.*)$"
         "float, title:^(Accounts)(.*)$"
       ];
-      windowrulev2 =
-        let
-          #FIXME these aren't working for some reason; higher priority so switched to manual entry for now
-          flameshot = "class:^(flameshot)$, title:^(flameshot)$";
-          scratch = "workspace:^(special:special)$";
-          #steam = "title:^()$ class:^([Ss]team)$";
-          steam = "title:^(*)$ class:^([Ss]team)$";
-          steamFloat = "title:^((?![Ss]team)*)$, class:^([Ss]team)$";
-          steamGame = "class:^([Ss]team_app_*)$";
-        in
-        [
-          "float, class:^(galculator)$"
-          "float, class:^(waypaper)$"
+      windowrulev2 = [
+        "float, class:^(galculator)$"
+        "float, class:^(waypaper)$"
+        "float, class:^(keymapp)$"
 
-          #
-          # ========== Always opaque ==========
-          #
-          "opaque, class:^([Gg]imp)$"
-          "opaque, class:^([Ff]lameshot)$"
-          "opaque, class:^([Ii]nkscape)$"
-          "opaque, class:^([Bb]lender)$"
-          "opaque, class:^([Oo][Bb][Ss])$"
-          "opaque, class:^(([Ss]team))$"
-          "opaque, class:^(([Ss]team_app_*)$"
+        #
+        # ========== Always opaque ==========
+        #
+        "opaque, class:^([Gg]imp)$"
+        "opaque, class:^([Ff]lameshot)$"
+        "opaque, class:^([Ii]nkscape)$"
+        "opaque, class:^([Bb]lender)$"
+        "opaque, class:^([Oo][Bb][Ss])$"
+        "opaque, class:^([Ss]team)$"
+        "opaque, class:^([Ss]team_app_*)$"
+        "opaque, class:^([Vv]lc)$"
 
-          # Remove transparancy from video
-          "opaque, title:^(Netflix)(.*)$"
-          "opaque, title:^(.*YouTube.*)$"
-          "opaque, title:^(Picture-in-Picture)$"
-          #
-          # ========== Scratch rules ==========
-          #
-          #"size 80% 85%, workspace:^(special:special)$"
-          #"center, workspace:^(special:special)$"
+        # Remove transparency from video
+        "opaque, title:^(Netflix)(.*)$"
+        "opaque, title:^(.*YouTube.*)$"
+        "opaque, title:^(Picture-in-Picture)$"
+        #
+        # ========== Scratch rules ==========
+        #
+        #"size 80% 85%, workspace:^(special:special)$"
+        #"center, workspace:^(special:special)$"
 
-          #
-          # ========== Steam rules ==========
-          #
-          "stayfocused, title:^()$,class:^(([Ss]team))$"
-          "minsize 1 1, title:^()$,class:^(([Ss]team))$"
-          #"workspace 7, class:^(([Ss]team_app_*))$"
-          #"monitor 0, class:^(([Ss]team_app_*))$"
-          "immediate, class:^(([Ss]team_app_*))$"
-          #"float, ${steamFloat}"
-          #"stayfocused, ${steam}"
-          #"minsize 1 1, ${steam}"
-          #"workspace 7, ${steamGame}"
-          #"monitor 0, ${steamGame}"
-          #"immediate, ${steamGame}"
+        #
+        # ========== Steam rules ==========
+        #
+        "stayfocused, title:^()$,class:^([Ss]team)$"
+        "minsize 1 1, title:^()$,class:^([Ss]team)$"
+        "immediate, class:^([Ss]team_app_*)$"
+        #"workspace 7, class:^([Ss]team_app_*)$"
+        #"monitor 0, class:^([Ss]team_app_*)$"
 
-          #
-          # ========== Fameshot rules ==========
-          #
-          # flameshot currently doesn't have great wayland support so needs some tweaks
-          #"rounding 0, class:^([Ff]lameshot)$"
-          #"noborder, class:^([Ff]lameshot)$"
-          #"float, class:^([Ff]lameshot)$"
-          #"move 0 0, class:^([Ff]lameshot)$"
-          #"suppressevent fullscreen, class:^([Ff]lameshot)$"
-          # "monitor:DP-1, ${flameshot}"
+        #
+        # ========== Fameshot rules ==========
+        #
+        # flameshot currently doesn't have great wayland support so needs some tweaks
+        #"rounding 0, class:^([Ff]lameshot)$"
+        #"noborder, class:^([Ff]lameshot)$"
+        #"float, class:^([Ff]lameshot)$"
+        #"move 0 0, class:^([Ff]lameshot)$"
+        #"suppressevent fullscreen, class:^([Ff]lameshot)$"
+        # "monitor:DP-1, ${flameshot}"
 
-          #
-          # ========== Workspace Assignments ==========
-          #
-          "workspace 8, class:^(virt-manager)$"
-          "workspace 8, class:^(obsidian)$"
-          "workspace 9, class:^(brave-browser)$"
-          "workspace 9, class:^(signal)$"
-          "workspace 9, class:^(org.telegram.desktop)$"
-          "workspace 9, class:^(discord)$"
-          "workspace 9, class:^(yubioath-flutter)$"
-          "workspace 0, class:^(spotify)$"
-        ];
+        #
+        # ========== Workspace Assignments ==========
+        #
+        "workspace 8, class:^(virt-manager)$"
+        "workspace 8, class:^(obsidian)$"
+        "workspace 9, class:^(brave-browser)$"
+        "workspace 9, class:^(signal)$"
+        "workspace 9, class:^(org.telegram.desktop)$"
+        "workspace 9, class:^(discord)$"
+        "workspace 9, class:^(yubioath-flutter)$"
+        "workspace 0, title:^([Ss]potify*)$"
+      ];
 
       # load at the end of the hyperland set
       # extraConfig = '''';
