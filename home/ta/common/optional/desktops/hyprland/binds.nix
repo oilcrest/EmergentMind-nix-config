@@ -1,4 +1,4 @@
-#NOTE actions prepended with `hy3;` are specific to the hy3 hyprland plugin
+#NOTE: Actions prepended with `hy3;` are specific to the hy3 hyprland plugin
 {
   config,
   lib,
@@ -7,23 +7,36 @@
 }:
 {
   wayland.windowManager.hyprland.settings = {
-    #
-    # ========== Mouse Bindings==========
-    #
+    # Reference of supported bind flags: https://wiki.hyprland.org/Configuring/Binds/#bind-flags
 
+    #
+    # ========== Mouse Binds ==========
+    #
     bindm = [
       # hold alt + leftlclick  to move/drag active window
       "ALT,mouse:272,movewindow"
       # hold alt + rightclick to resize active window
       "ALT,mouse:273,resizewindow"
     ];
+    #
+    # ========== Non-consuming Binds ==========
+    #
     bindn = [
       # allow tab selection using mouse
       ", mouse:272, hy3:focustab, mouse"
     ];
-
     #
-    # ========== Key Bindings==========
+    # ========== Repeat Binds ==========
+    #
+    binde = [
+      # Resize active window 5 pixels in direction
+      "Control_L&Shift_L&Alt_L, h, resizeactive, -5 0"
+      "Control_L&Shift_L&Alt_L, j, resizeactive, 0 5"
+      "Control_L&Shift_L&Alt_L, k, resizeactive, 0 -5"
+      "Control_L&Shift_L&Alt_L, l, resizeactive, 5 0"
+    ];
+    #
+    # ========== One-shot Binds ==========
     #
     bind =
       let
@@ -81,8 +94,8 @@
         #
         # ========== Quick Launch ==========
         #
-        "SUPER,space,exec,rofi -show run"
-        "SUPER_SHIFT,space,exec,rofi -show drun"
+        "ALT,space,exec,rofi -show drun"
+        "SHIFT_ALT,space,exec,rofi -show run"
         "SUPER,s,exec,rofi -show ssh"
         "ALT,tab,exec,rofi -show window"
 
@@ -119,26 +132,22 @@
         #
         # ========== Windows and Groups ==========
         #
+        #NOTE: window resizing is under "Repeat Binds" above
+
         # Close the focused/active window
         "SHIFTALT,q,hy3:killactive"
 
-        #FIXME play around with fullscreenstate to get a setting that works with maximizing sec cams in window
+        #FIXME:(hyprland) play around with fullscreenstate to get a setting that works with maximizing sec cams in window
         # Fullscreen
         "ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
-
-        # Float and pin
-        "SHIFTALT,space,togglefloating"
+        # Float
+        "SHIFTALT,F,togglefloating"
+        # Pin Active Floatting window
         "SHIFTALT, p, pin, active" # pins a floating window (i.e. show it on all workspaces)
-
-        # Resize active window 5 pixels in direction
-        "Control_L&Shift_L&Alt_L, h, resizeactive, -5 0"
-        "Control_L&Shift_L&Alt_L, j, resizeactive, 0 5"
-        "Control_L&Shift_L&Alt_L, k, resizeactive, 0 -5"
-        "Control_L&Shift_L&Alt_L, l, resizeactive, 5 0"
 
         # Splits groups
         "ALT,v,hy3:makegroup,v" # make a vertical split
-        "SHIFTALT,v,hy3:makegroup,h" # make a horiztonal split
+        "SHIFTALT,v,hy3:makegroup,h" # make a horizontal split
         "ALT,x,hy3:changegroup,opposite" # toggle btwn splits if untabbed
         "ALT,s,togglesplit"
 
@@ -162,9 +171,11 @@
         (map (n: "SHIFTALT,${n},hy3:movetoworkspace,name:${n}") workspaces)
 
         # Move focus from active window to window in specified direction
+        #(lib.mapAttrsToList (key: direction: "ALT,${key}, exec, customMoveFocus ${direction}") directions)
         (lib.mapAttrsToList (key: direction: "ALT,${key},hy3:movefocus,${direction},warp") directions)
 
         # Move windows
+        #(lib.mapAttrsToList (key: direction: "SHIFTALT,${key}, exec, customMoveWindow ${direction}") directions)
         (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},hy3:movewindow,${direction}") directions)
 
         # Move workspace to monitor in specified direction
