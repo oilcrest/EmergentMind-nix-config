@@ -5,8 +5,12 @@
   ...
 }:
 let
+  #
+  # ========== Monitor Toggling ==========
+  #
   primaryMonitor = lib.head (lib.filter (m: m.primary) config.monitors);
 
+  # Toggle all monitors
   toggleMonitors = pkgs.writeShellApplication {
     name = "toggleMonitors";
     text = ''
@@ -44,6 +48,7 @@ let
       fi    '';
   };
 
+  # Toggle all non-primary monitors
   #dpms standby seems to be working but if monitor wakeup is too sensitive for gaming, can try suspend or off instead
   toggleMonitorsNonPrimary = pkgs.writeShellApplication {
     name = "toggleMonitorsNonPrimary";
