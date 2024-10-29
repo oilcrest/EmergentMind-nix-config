@@ -6,31 +6,26 @@
 
 ### Current roadmap focus items
 
-Hyprland stuff:
-    - Startup things to sort out:
-        - not all hyprland workspace assignments working
-    - hy3
-        - bash hack as workaround to https://github.com/outfoxxed/hy3/issues/2
-    - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
+- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
+- Refactor from configVars to modularized hostSpec
+- Re-implement modules to make use of options for enablement
 
-- neovim
-    - sort out lsp deficiencies
-
+- /home/ta/.config/mimeapps.list causes a collisions when rebuilding home-manager
 - update docs in nix-secrets
 
 #### General workflow improvements
-- dig into better kitty, fzf, telescope, and zsh usage
-- look at https://github.com/dandavison/delta
 
 - New tools to integrate
-  - atuin - https://github.com/atuinsh/atuin
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
 
 - New tools to try
   - wezterm
   - tmux or zellij
 
+- look at https://github.com/dandavison/delta
+
 - NeoVim stuff to look at and integrate (so much to do and learn)
+    - go through existing plugins, a few are enabled but binds are disabled etc
     - refine linting and fixing in nvim
     - hardtime # training tool to stop bad vim habits # https://github.com/m4xshen/hardtime.nvim
     - lint # not sure if this is redundant with all the other language stuff
@@ -130,6 +125,8 @@ DEFERRED:
   - ~~check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.~~
 
 #### 4. Ghost - completed: 2024.10.21
+
+Migrate primary box to NixOS
 
 ##### 4.1 Prep
 
