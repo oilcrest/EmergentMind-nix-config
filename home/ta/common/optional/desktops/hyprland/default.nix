@@ -62,9 +62,9 @@
       );
 
       #FIXME:(hyprland) adapt this to work with new monitor module
+      #FIXME:(hyprland) ws1 still appears on both DP-1 and HDMI-A-1 on reboot
       workspace = [
         "1, monitor:DP-1, default:true, persistent:true"
-        "10, monitor:DP-1, default:true" # HACK: to workaround finicky bs
         "3, monitor:DP-1, default:true"
         "4, monitor:DP-1, default:true"
         "5, monitor:DP-1, default:true"
