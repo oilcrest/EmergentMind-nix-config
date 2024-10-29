@@ -1,3 +1,4 @@
+#Note: ctrl+r to cycle filter modes
 {
   config,
   ...
