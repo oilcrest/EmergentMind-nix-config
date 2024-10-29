@@ -1,5 +1,13 @@
-# LSP Progress Indicator
-{ config, lib, ... }:
+# LSP
+{
+  config,
+  lib,
+  configLib,
+  ...
+}:
+let
+  flakeRoot = configLib.relativeToRoot "./.";
+in
 {
   options = {
     nixvim-config.plugins.lspconfig.enable = lib.mkEnableOption "enables lspconfig module";
@@ -13,7 +21,6 @@
         };
         lsp = {
           enable = true;
-
           servers = {
             clangd = {
               enable = true;
@@ -45,17 +52,20 @@
                 options = {
                   nixos = {
                     expr = ''
-                      let configs = (builtins.getFlake ("git+file://" + builtins.toString ./.)).nixosConfigurations; in (builtins.head (builtins.attrValues configs)).options
+                      let configs = (builtins.getFlake ${flakeRoot}).nixosConfigurations;
+                      in (builtins.head (builtins.attrValues configs)).options
                     '';
                   };
                   home_manager = {
                     expr = ''
-                      let configs = (builtins.getFlake ("git+file://" + builtins.toString ./.)).homeConfigurations; in (builtins.head (builtins.attrValues configs)).options
+                      let configs = (builtins.getFlake ${flakeRoot}).homeConfigurations;
+                      in (builtins.head (builtins.attrValues configs)).options
                     '';
                   };
                   darwin = {
                     expr = ''
-                      let configs = (builtins.getFlake ("git+file://" + builtins.toString ./.)).darwinConfigurations; in (builtins.head (builtins.attrValues configs)).options
+                      let configs = (builtins.getFlake ${flakeRoot}).darwinConfigurations;
+                      in (builtins.head (builtins.attrValues configs)).options
                     '';
                   };
                 };
@@ -69,6 +79,14 @@
                 "typescript"
                 "typescriptreact"
               ];
+            };
+            typos_lsp = {
+              enable = true;
+              extraOptions = {
+                init_options = {
+                  diagnosticSeverity = "Warning";
+                };
+              };
             };
             eslint = {
               enable = true;
@@ -89,65 +107,65 @@
             #            };
             #          };
           };
-          # keymaps = {
-          #   silent = true;
-          #   lspBuf = {
-          #   gd = {
-          #     action = "definition";
-          #     desc = "Goto Definition";
-          #   };
-          #   gr = {
-          #     action = "references";
-          #     desc = "Goto References";
-          #   };
-          #   gD = {
-          #     action = "declaration";
-          #     desc = "Goto Declaration";
-          #   };
-          #   gI = {
-          #     action = "implementation";
-          #     desc = "Goto Implementation";
-          #   };
-          #   gT = {
-          #     action = "type_definition";
-          #     desc = "Type Definition";
-          #   };
-          #   K = {
-          #     action = "hover";
-          #     desc = "Hover";
-          #   };
-          #   "<leader>cw" = {
-          #     action = "workspace_symbol";
-          #     desc = "Workspace Symbol";
-          #   };
-          #   "<leader>cr" = {
-          #     action = "rename";
-          #     desc = "Rename";
-          #   };
-          # "<leader>ca" = {
-          #   action = "code_action";
-          #   desc = "Code Action";
-          # };
-          # "<C-k>" = {
-          #   action = "signature_help";
-          #   desc = "Signature Help";
-          # };
-          # };
-          # diagnostic = {
-          #   "<leader>cd" = {
-          #     action = "open_float";
-          #     desc = "Line Diagnostics";
-          #   };
-          #   "[d" = {
-          #     action = "goto_next";
-          #     desc = "Next Diagnostic";
-          #   };
-          #   "]d" = {
-          #     action = "goto_prev";
-          #     desc = "Previous Diagnostic";
-          #   };
-          # };
-          # };
+          keymaps = {
+            silent = true;
+            lspBuf = {
+              gd = {
+                action = "definition";
+                desc = "Goto Definition";
+              };
+              gr = {
+                action = "references";
+                desc = "Goto References";
+              };
+              gD = {
+                action = "declaration";
+                desc = "Goto Declaration";
+              };
+              gI = {
+                action = "implementation";
+                desc = "Goto Implementation";
+              };
+              gT = {
+                action = "type_definition";
+                desc = "Type Definition";
+              };
+              K = {
+                action = "hover";
+                desc = "Hover";
+              };
+              "<leader>cw" = {
+                action = "workspace_symbol";
+                desc = "Workspace Symbol";
+              };
+              "<leader>cr" = {
+                action = "rename";
+                desc = "Rename";
+              };
+              "<leader>ca" = {
+                action = "code_action";
+                desc = "Code Action";
+              };
+              "<C-k>" = {
+                action = "signature_help";
+                desc = "Signature Help";
+              };
+            };
+            diagnostic = {
+              "<leader>cd" = {
+                action = "open_float";
+                desc = "Line Diagnostics";
+              };
+              "[d" = {
+                action = "goto_next";
+                desc = "Next Diagnostic";
+              };
+              "]d" = {
+                action = "goto_prev";
+                desc = "Previous Diagnostic";
+              };
+            };
+          };
         };
       };
       extraConfigLua = ''
