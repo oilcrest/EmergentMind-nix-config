@@ -1,64 +1,6 @@
 {
   description = "EmergentMind's Nix-Config";
 
-  inputs = {
-    #################### Official NixOS and HM Package Sources ####################
-
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # The next two are for pinning to stable vs unstable regardless of what the above is set to
-    # See also 'stable-packages' and 'unstable-packages' overlays at 'overlays/default.nix"
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    hardware.url = "github:nixos/nixos-hardware";
-    home-manager = {
-      #url = "github:nix-community/home-manager/release-24.05";
-      #inputs.nixpkgs.follows = "nixpkgs-stable";
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
-    #################### Utilities ####################
-
-    # Declarative partitioning and formatting
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Secrets management. See ./docs/secretsmgmt.md
-    sops-nix = {
-      url = "github:mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # vim4LMFQR!
-    nixvim = {
-      #url = "github:nix-community/nixvim/nixos-24.05";
-      #inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
-    pre-commit-hooks = {
-      url = "github:cachix/git-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Theming
-    stylix.url = "github:danth/stylix/release-24.05";
-    rose-pine-hyprcursor.url = "github:ndom91/rose-pine-hyprcursor";
-
-    #################### Personal Repositories ####################
-
-    # Private secrets repo.  See ./docs/secretsmgmt.md
-    # Authenticate via ssh and use shallow clone
-    nix-secrets = {
-      url = "git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&shallow=1";
-      inputs = { };
-    };
-  };
-
   outputs =
     {
       self,
@@ -174,4 +116,62 @@
         };
       };
     };
+
+  inputs = {
+    #################### Official NixOS and HM Package Sources ####################
+
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # The next two are for pinning to stable vs unstable regardless of what the above is set to
+    # See also 'stable-packages' and 'unstable-packages' overlays at 'overlays/default.nix"
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    hardware.url = "github:nixos/nixos-hardware";
+    home-manager = {
+      #url = "github:nix-community/home-manager/release-24.05";
+      #inputs.nixpkgs.follows = "nixpkgs-stable";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    #################### Utilities ####################
+
+    # Declarative partitioning and formatting
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Secrets management. See ./docs/secretsmgmt.md
+    sops-nix = {
+      url = "github:mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # vim4LMFQR!
+    nixvim = {
+      #url = "github:nix-community/nixvim/nixos-24.05";
+      #inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Theming
+    stylix.url = "github:danth/stylix/release-24.05";
+    rose-pine-hyprcursor.url = "github:ndom91/rose-pine-hyprcursor";
+
+    #################### Personal Repositories ####################
+
+    # Private secrets repo.  See ./docs/secretsmgmt.md
+    # Authenticate via ssh and use shallow clone
+    nix-secrets = {
+      url = "git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&shallow=1";
+      inputs = { };
+    };
+  };
 }
