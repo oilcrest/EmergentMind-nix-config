@@ -8,7 +8,6 @@
 {
   inputs,
   lib,
-  configVars,
   configLib,
   ...
 }:
@@ -19,9 +18,12 @@
 
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-intel
-    #inputs.hardware.nixosModules.common-gpu-intel #This is apparenlty already declared in `/nix/store/HASH-source/common/gpu/intel
+    #inputs.hardware.nixosModules.common-gpu-intel #This is apparently already declared in `/nix/store/HASH-source/common/gpu/intel
 
     #TODO move gusto to disko
+
+    #################### Misc Inputs ####################
+    inputs.stylix.nixosModules.stylix
 
     (map configLib.relativeToRoot [
 

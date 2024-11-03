@@ -27,6 +27,9 @@
     inputs.disko.nixosModules.disko
     (configLib.relativeToRoot "hosts/common/disks/ghost.nix")
 
+    #################### Misc Inputs ####################
+    inputs.stylix.nixosModules.stylix
+
     (map configLib.relativeToRoot [
       #################### Required Configs ####################
       "hosts/common/core"
