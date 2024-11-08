@@ -25,7 +25,6 @@
 
       # Media production
       audacity
-      blender
       gimp
       inkscape
       obs-studio
@@ -34,6 +33,7 @@
       ;
 
     inherit (pkgs.stable)
+      blender
       drawio
       ;
   };
