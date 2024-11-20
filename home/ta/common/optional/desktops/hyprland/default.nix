@@ -64,15 +64,15 @@
       #FIXME:(hyprland) adapt this to work with new monitor module
       #FIXME:(hyprland) ws1 still appears on both DP-1 and HDMI-A-1 on reboot
       workspace = [
-        "1, monitor:DP-1, default:true, persistent:true"
-        "3, monitor:DP-1, default:true"
-        "4, monitor:DP-1, default:true"
-        "5, monitor:DP-1, default:true"
-        "6, monitor:DP-1, default:true"
-        "7, monitor:DP-1, default:true"
-        "8, monitor:DP-2, default:true, persistent:true"
-        "9, monitor:DP-3, default:true, persistent:true"
-        "0, monitor:HDMI-A-1, default:true, persistent:true"
+        "1, monitor:DP-2, default:true, persistent:true"
+        "3, monitor:DP-2, default:true"
+        "4, monitor:DP-2, default:true"
+        "5, monitor:DP-2, default:true"
+        "6, monitor:DP-2, default:true"
+        "7, monitor:DP-2, default:true"
+        "8, monitor:DP-1, default:true, persistent:true"
+        "9, monitor:HDMI-A-1, default:true, persistent:true"
+        "0, monitor:DP-3, default:true, persistent:true"
       ];
 
       #
@@ -127,9 +127,10 @@
           new_optimizations = true;
           popups = true;
         };
-        drop_shadow = true;
-        shadow_range = 12;
-        shadow_offset = "3 3";
+        #FIXME: renamed options
+        #        drop_shadow = true;
+        #        shadow_range = 12;
+        #        shadow_offset = "3 3";
         #"col.shadow" = "0x44000000";
         #        "col.shadow_inactive" = "0x66000000";
       };
@@ -231,7 +232,7 @@
         "workspace 9, class:^(signal)$"
         "workspace 9, class:^(org.telegram.desktop)$"
         "workspace 9, class:^(discord)$"
-        "workspace 9, class:^(yubioath-flutter)$"
+        "workspace 0, class:^(yubioath-flutter)$"
         "workspace 0, title:^([Ss]potify*)$"
       ];
 

@@ -31,21 +31,14 @@
   # If on hyprland, use `hyprctl monitors` to get monitor info.
   # https://wiki.hyprland.org/Configuring/Monitors/
   #           ------
-  #          | DP-3 |
+  #        | HDMI-A-1 |
   #           ------
-  #  ------   ------    ------
-  # | DP-2 | | DP-1 | | HDMI-A-1 |
-  #  ------   ------    ------
+  #  ------   ------   ------
+  # | DP-1 | | DP-2 | | DP-3 |
+  #  ------   ------   ------
   monitors = [
     {
       name = "DP-1";
-      width = 2560;
-      height = 1440;
-      refreshRate = 240;
-      primary = true;
-    }
-    {
-      name = "DP-2";
       width = 2560;
       height = 2880;
       refreshRate = 60;
@@ -53,21 +46,28 @@
       workspace = "8";
     }
     {
-      name = "DP-3";
-      width = 1920;
-      height = 1080;
+      name = "DP-2";
+      width = 3840;
+      height = 2160;
       refreshRate = 60;
-      y = -1080;
-      transform = 2;
-      workspace = "9";
+      primary = true;
+    }
+    {
+      name = "DP-3";
+      width = 2560;
+      height = 2880;
+      refreshRate = 60;
+      x = 3840;
+      workspace = "0";
     }
     {
       name = "HDMI-A-1";
       width = 2560;
-      height = 2880;
-      refreshRate = 60;
-      x = 2560;
-      workspace = "0";
+      height = 1440;
+      refreshRate = 240;
+      y = -1440;
+      transform = 2;
+      workspace = "9";
     }
   ];
 }
