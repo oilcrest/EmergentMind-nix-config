@@ -21,7 +21,7 @@ let
         "--adaptive-sync"
         "--expose-wayland"
         "--steam"
-        #"--hdr-enabled"
+        "--hdr-enabled"
       ];
       steam = lib.concatStringsSep " " [
         "steam"

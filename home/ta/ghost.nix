@@ -50,6 +50,7 @@
       width = 3840;
       height = 2160;
       refreshRate = 60;
+      vrr = 1; # Variable refresh rate / amd freesync. 0 disabled, 1 enabled, 2 fullscreen only
       primary = true;
     }
     {
