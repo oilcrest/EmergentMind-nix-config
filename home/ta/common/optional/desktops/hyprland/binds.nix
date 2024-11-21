@@ -137,9 +137,9 @@
         # Close the focused/active window
         "SHIFTALT,q,hy3:killactive"
 
-        #FIXME:(hyprland) play around with fullscreenstate to get a setting that works with maximizing sec cams in window
         # Fullscreen
-        "ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
+        #"ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
+        "ALT,f,fullscreenstate,2 -1" # `internal client`, where `internal` and `client` can be -1 - current, 0 - none, 1 - maximize, 2 - fullscreen, 3 - maximize and fullscreen
         # Float
         "SHIFTALT,F,togglefloating"
         # Pin Active Floatting window
