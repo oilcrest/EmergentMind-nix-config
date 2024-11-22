@@ -62,15 +62,15 @@
       );
 
       #FIXME:(hyprland) adapt this to work with new monitor module
-      #FIXME:(hyprland) ws1 still appears on both DP-1 and HDMI-A-1 on reboot
+      #FIXME:(hyprland) ws1 still appears on both DP-1 and DP-3 on reboot
       workspace = [
-        "1, monitor:DP-2, default:true, persistent:true"
-        "3, monitor:DP-2, default:true"
-        "4, monitor:DP-2, default:true"
-        "5, monitor:DP-2, default:true"
-        "6, monitor:DP-2, default:true"
-        "7, monitor:DP-2, default:true"
-        "8, monitor:DP-1, default:true, persistent:true"
+        "1, monitor:DP-1, default:true, persistent:true"
+        "3, monitor:DP-1, default:true"
+        "4, monitor:DP-1, default:true"
+        "5, monitor:DP-1, default:true"
+        "6, monitor:DP-1, default:true"
+        "7, monitor:DP-1, default:true"
+        "8, monitor:DP-2, default:true, persistent:true"
         "9, monitor:HDMI-A-1, default:true, persistent:true"
         "0, monitor:DP-3, default:true, persistent:true"
       ];
@@ -149,7 +149,7 @@
         ''[workspace 8 silent]${pkgs.virt-manager}/bin/virt-manager''
         ''[workspace 8 silent]${pkgs.obsidian}/bin/obsidian''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
-        ''[workspace 9 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
+        ''[workspace 0 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
         ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
         ''[workspace 0 silent]${pkgs.spotify}/bin/spotify''
         ''[workspace special silent]${pkgs.keymapp}/bin/keymapp''

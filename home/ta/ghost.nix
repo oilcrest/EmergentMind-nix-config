@@ -34,11 +34,11 @@
   #        | HDMI-A-1 |
   #           ------
   #  ------   ------   ------
-  # | DP-1 | | DP-2 | | DP-3 |
+  # | DP-2 | | DP-1 | | DP-3 |
   #  ------   ------   ------
   monitors = [
     {
-      name = "DP-1";
+      name = "DP-2";
       width = 2560;
       height = 2880;
       refreshRate = 60;
@@ -46,7 +46,7 @@
       workspace = "8";
     }
     {
-      name = "DP-2";
+      name = "DP-1";
       width = 3840;
       height = 2160;
       refreshRate = 60;
