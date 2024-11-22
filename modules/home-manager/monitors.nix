@@ -52,6 +52,12 @@
             type = lib.types.nullOr lib.types.str;
             default = null;
           };
+          vrr = lib.mkOption {
+            type = lib.types.int;
+            description = "Variable Refresh Rate aka Adaptive Sync aka AMD FreeSync./nValues are oriented towards hyprland's vrr values which are:\n0 = off, 1 = on, 2 = fullscreen only\nhttps://wiki.hyprland.org/Configuring/Variables/#misc";
+            default = 0;
+          };
+
         };
       }
     );
