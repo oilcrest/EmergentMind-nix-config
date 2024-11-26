@@ -10,10 +10,14 @@
       target = "hyprland-session.target"; # NOTE = hyprland/default.nix stops graphical-session.target and starts hyprland-sessionl.target
     };
     settings = {
+      #
+      # ========== Main Bar ==========
+      #
       mainBar = {
         layer = "top";
         position = "top";
         height = 36; # 36 is the minimum height required by the modules
+        #FIXME:(hyprland)make use of monitors module
         output = [
           "DP-1"
           "DP-2"
@@ -22,7 +26,6 @@
         ];
         modules-left = [
           "hyprland/workspaces"
-          "hyprland/mode"
         ];
         modules-center = [ "hyprland/window" ];
         modules-right = [
