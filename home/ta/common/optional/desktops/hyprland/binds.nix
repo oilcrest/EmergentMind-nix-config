@@ -28,13 +28,25 @@
     #
     # ========== Repeat Binds ==========
     #
-    binde = [
-      # Resize active window 5 pixels in direction
-      "Control_L&Shift_L&Alt_L, h, resizeactive, -5 0"
-      "Control_L&Shift_L&Alt_L, j, resizeactive, 0 5"
-      "Control_L&Shift_L&Alt_L, k, resizeactive, 0 -5"
-      "Control_L&Shift_L&Alt_L, l, resizeactive, 5 0"
-    ];
+    binde =
+      let
+        pactl = lib.getExe' pkgs.pulseaudio "pactl"; # installed via /hosts/common/optional/audio.nix
+      in
+      [
+        # Resize active window 5 pixels in direction
+        "Control_L&Shift_L&Alt_L, h, resizeactive, -5 0"
+        "Control_L&Shift_L&Alt_L, j, resizeactive, 0 5"
+        "Control_L&Shift_L&Alt_L, k, resizeactive, 0 -5"
+        "Control_L&Shift_L&Alt_L, l, resizeactive, 5 0"
+
+        #FIXME: repeat is not working for these
+        # Volume - Output
+        ", XF86AudioRaiseVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ +5%"
+        ", XF86AudioLowerVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ -5%"
+        # Volume - Input
+        ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +5%"
+        ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -5%"
+      ];
     #
     # ========== One-shot Binds ==========
     #
@@ -115,14 +127,11 @@
         #
         # ========== Media Controls ==========
         #
+        # see "binde" above for volume ctrls that need repeat binding
         # Output
         ", XF86AudioMute, exec, ${pactl} set-sink-mute @DEFAULT_SINK@ toggle"
-        ", XF86AudioRaiseVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ +1%"
-        ", XF86AudioLowerVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ -1%"
         # Input
         ", XF86AudioMute, exec, ${pactl} set-source-mute @DEFAULT_SOURCE@ toggle"
-        ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +1%"
-        ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -1%"
         # Player
         #FIXME For some reason these key pressings aren't firing from Moonlander. Nothing shows when running wev
         ", XF86AudioPlay, exec, 'playerctl --ignore-player=firefox,chromium,brave play-pause'"
