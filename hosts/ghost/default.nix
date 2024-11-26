@@ -66,7 +66,8 @@
     enableIPv6 = false;
   };
 
-  semi-active-av.enable = true;
+  #FIXME:(clamav) something not working. disabled to reduce log spam
+  semi-active-av.enable = false;
 
   services.backup = {
     enable = true;
