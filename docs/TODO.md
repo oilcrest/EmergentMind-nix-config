@@ -4,6 +4,8 @@
 
 ## Short Term
 
+- get flameshot working, grimshot isn't adequate
+
 ### Current roadmap focus items
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings

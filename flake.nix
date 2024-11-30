@@ -120,7 +120,11 @@
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     # The next two are for pinning to stable vs unstable regardless of what the above is set to
+    # This is particularly useful when an upcoming stable release is in beta because you can effectively
+    # keep 'nixpkgs-stable' set to stable for critical packages while setting 'nixpkgs' to the beta branch to
+    # get a jump start on deprecation changes.
     # See also 'stable-packages' and 'unstable-packages' overlays at 'overlays/default.nix"
+    #FIXME: move this back to 24.11 once the yubioath-flutter dependency of python mss is fixed.
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -146,7 +150,7 @@
 
     # vim4LMFQR!
     nixvim = {
-      #url = "github:nix-community/nixvim/nixos-24.05";
+      #url = "github:nix-community/nixvim/nixos-24.11";
       #inputs.nixpkgs.follows = "nixpkgs";
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
