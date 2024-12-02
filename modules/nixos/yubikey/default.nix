@@ -79,7 +79,8 @@ in
     environment.systemPackages = lib.flatten [
       (builtins.attrValues {
         inherit (pkgs)
-          yubioath-flutter # gui-based authenticator tool. yubioath-desktop on older nixpkg channels
+          #FIXME: Temporarily disabled these due to unfixed python related build error
+          #yubioath-flutter # gui-based authenticator tool. yubioath-desktop on older nixpkg channels
           yubikey-manager # cli-based authenticator tool. accessed via `ykman`
 
           pam_u2f # for yubikey with sudo
@@ -92,7 +93,7 @@ in
     # FIXME(yubikey): Put this behind an option for yubikey ssh
     # Create ssh files
 
-    # FIXME(yubikey): Not sure if we need the wheel one. Also my idProduct gruop is 0407
+    # FIXME(yubikey): Not sure if we need the wheel one. Also my idProduct group is 0407
     # Yubikey 4/5 U2F+CCID
     # SUBSYSTEM == "usb", ATTR{idVendor}=="1050", ENV{ID_SECURITY_TOKEN}="1", GROUP="wheel"
     # We already have a yubikey rule that sets the ENV variable
