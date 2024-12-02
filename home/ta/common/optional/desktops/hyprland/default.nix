@@ -127,12 +127,13 @@
           new_optimizations = true;
           popups = true;
         };
-        #FIXME: renamed options
-        #        drop_shadow = true;
-        #        shadow_range = 12;
-        #        shadow_offset = "3 3";
-        #"col.shadow" = "0x44000000";
-        #        "col.shadow_inactive" = "0x66000000";
+        shadow = {
+          enabled = true;
+          range = 12;
+          offset = "3 3";
+          color = "0x88ff9400";
+          color_inactive = "0x8818141d";
+        };
       };
       # group = {
       #groupbar = {

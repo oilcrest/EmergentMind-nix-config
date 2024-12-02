@@ -105,8 +105,7 @@
   #TODO:(stylix) move this stuff to separate file but define theme itself per host
   # host-wide styling
   stylix = {
-    #FIXME:(stylix) Reenable and solve the version discrepancy bullshit
-    enable = false;
+    enable = true;
     image = /home/ta/sync/wallpaper/1126712.png;
     #      base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
