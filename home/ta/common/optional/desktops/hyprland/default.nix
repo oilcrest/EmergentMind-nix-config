@@ -150,8 +150,7 @@
         ''[workspace 8 silent]${pkgs.virt-manager}/bin/virt-manager''
         ''[workspace 8 silent]${pkgs.obsidian}/bin/obsidian''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
-        #FIXME: re-enable once bug is fixed
-        #        ''[workspace 0 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
+        ''[workspace 0 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
         ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
         ''[workspace 0 silent]${pkgs.spotify}/bin/spotify''
         ''[workspace special silent]${pkgs.keymapp}/bin/keymapp''

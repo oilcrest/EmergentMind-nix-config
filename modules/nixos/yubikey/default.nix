@@ -79,8 +79,7 @@ in
     environment.systemPackages = lib.flatten [
       (builtins.attrValues {
         inherit (pkgs)
-          #FIXME: Temporarily disabled these due to unfixed python related build error
-          #yubioath-flutter # gui-based authenticator tool. yubioath-desktop on older nixpkg channels
+          yubioath-flutter # gui-based authenticator tool. yubioath-desktop on older nixpkg channels
           yubikey-manager # cli-based authenticator tool. accessed via `ykman`
 
           pam_u2f # for yubikey with sudo
