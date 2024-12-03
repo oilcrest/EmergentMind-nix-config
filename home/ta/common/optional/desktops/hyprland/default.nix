@@ -131,8 +131,8 @@
           enabled = true;
           range = 12;
           offset = "3 3";
-          color = "0x88ff9400";
-          color_inactive = "0x8818141d";
+          #color = "0x88ff9400";
+          #color_inactive = "0x8818141d";
         };
       };
       # group = {

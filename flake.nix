@@ -161,8 +161,7 @@
     };
 
     # Theming
-    #FIXME: waiting for 24.11 branch
-    stylix.url = "github:danth/stylix/release-24.05";
+    stylix.url = "github:danth/stylix/release-24.11";
     rose-pine-hyprcursor.url = "github:ndom91/rose-pine-hyprcursor";
 
     #################### Personal Repositories ####################

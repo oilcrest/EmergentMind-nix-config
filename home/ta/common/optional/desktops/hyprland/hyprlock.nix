@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   programs.hyprlock = {
     enable = true;
@@ -16,7 +16,7 @@
         no_fade_in = false;
       };
 
-      background = [
+      background = lib.mkDefault [
         {
           path = "screenshot";
           blur_passes = 3;
@@ -24,7 +24,7 @@
         }
       ];
 
-      input-field = [
+      input-field = lib.mkDefault [
         {
           size = "200, 50";
           position = "0, -80";
