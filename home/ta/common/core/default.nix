@@ -17,7 +17,7 @@ in
       "modules/home-manager"
     ])
     ./${platform}.nix
-    #   ./zsh
+    ./zsh
     ./nixvim
     ./bash.nix
     ./bat.nix
