@@ -1,7 +1,6 @@
 # Based on https://github.com/coreyoconnor/nix_configs/blob/b59dbb77ee38e515f4099f8fb0feb5e2286a5b34/modules/semi-active-av.nix
 {
   config,
-  configVars,
   pkgs,
   lib,
   ...
@@ -28,7 +27,6 @@ let
     "/usr"
   ];
 
-  #FIXME addresses should be passed in via hostSpec eventually, or option
   clamav-notify = pkgs.writeScript "clamav-notify" ''
     #!/bin/sh
     ALERT="Signature detected by clamav: $CLAM_VIRUSEVENT_VIRUSNAME in $CLAM_VIRUSEVENT_FILENAME"
@@ -39,12 +37,12 @@ let
     done
     TMPDIR=$(mktemp -d)
     cat >"$TMPDIR"/clamav-mail.txt <<-EOF
-        From:${configVars.email.notifier}
+        From:${config.hostSpec.email.notifier}
         Subject: [$(hostname)] $(date) Suspicious file detected!
 
         $ALERT
         EOF
-          msmtp -t $(hostname).alerts.net@${configVars.domain} <"$TMPDIR"/clamav-mail.txt
+          msmtp -t $(hostname).alerts.net@${config.hostSpec.domain} <"$TMPDIR"/clamav-mail.txt
   '';
 in
 {

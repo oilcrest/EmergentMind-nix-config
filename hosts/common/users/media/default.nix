@@ -3,13 +3,15 @@
 #
 
 {
+  inputs,
+  lib,
   pkgs,
   config,
-  configLib,
   ...
 }:
 let
-  # FIXME make use of configVars for media user
+  #TODO:(gusto) make use of hostSpec for media user
+  hostSpec = config.hostSpec;
   secretsSubPath = "passwords/media";
 in
 {
@@ -28,9 +30,29 @@ in
 
     packages = [ pkgs.home-manager ];
   };
-
-  # Import this user's personal/home configurations
-  home-manager.users.media = import (
-    configLib.relativeToRoot "home/media/${config.networking.hostName}.nix"
-  );
+}
+# Import this user's personal/home configurations
+// lib.optionalAttrs (inputs ? "home-manager") {
+  home-manager = {
+    extraSpecialArgs = {
+      inherit pkgs inputs;
+      hostSpec = config.hostSpec;
+    };
+    users.media.imports = lib.flatten (
+      lib.optional (!hostSpec.isMinimal) [
+        (
+          { config, ... }:
+          import (lib.custom.relativeToRoot "home/media/${hostSpec.hostName}.nix") {
+            inherit
+              pkgs
+              inputs
+              config
+              lib
+              hostSpec
+              ;
+          }
+        )
+      ]
+    );
+  };
 }

@@ -9,7 +9,8 @@
 ### Current roadmap focus items
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
-- Refactor from configVars to modularized hostSpec
+- ~~Refactor from configVars to modularized hostSpec~~
+    - add check for useYubikey flag in sops.nix
 - Re-implement modules to make use of options for enablement
 
 - /home/ta/.config/mimeapps.list causes a collisions when rebuilding home-manager
@@ -177,7 +178,7 @@ Migrate primary box to NixOS
 ##### 5.1 reduce duplication and modularize
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
-- Refactor from configVars to modularized hostSpec
+- ~~Refactor from configVars to modularized hostSpec~~
 - Re-implement modules to make use of options for enablement
 
 ##### 5.2 script cleaning

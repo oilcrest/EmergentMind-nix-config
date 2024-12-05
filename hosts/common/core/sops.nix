@@ -4,19 +4,14 @@
   pkgs,
   inputs,
   config,
-  configVars,
   ...
 }:
 let
   secretsDirectory = builtins.toString inputs.nix-secrets;
   secretsFile = "${secretsDirectory}/secrets.yaml";
-
-  # FIXME:(configLib) Switch to a configLib function
-  homeDirectory =
-    if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in
 {
-  imports = [ inputs.sops-nix.nixosModules.sops ];
+  #the import for inputs.sops-nix.nixosModules.sops is handled in hosts/common/core/default.nix so that it can be dynamically input according to the platform
 
   sops = {
     defaultSopsFile = "${secretsFile}";
@@ -38,21 +33,21 @@ in
       # the age key.
       # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived
       # from an ssh key).
-      "user_age_keys/${configVars.username}_${config.networking.hostName}" = {
-        owner = config.users.users.${configVars.username}.name;
-        inherit (config.users.users.${configVars.username}) group;
+      "user_age_keys/${config.hostSpec.username}_${config.networking.hostName}" = {
+        owner = config.users.users.${config.hostSpec.username}.name;
+        inherit (config.users.users.${config.hostSpec.username}) group;
         # We need to ensure the entire directory structure is that of the user...
-        path = "${homeDirectory}/.config/sops/age/keys.txt";
+        path = "${config.hostSpec.home}/.config/sops/age/keys.txt";
       };
       # extract to default pam-u2f authfile location for passwordless sudo. see modules/common/yubikey
       "yubico/u2f_keys" = {
-        owner = config.users.users.${configVars.username}.name;
-        inherit (config.users.users.${configVars.username}) group;
-        path = "${homeDirectory}/.config/Yubico/u2f_keys";
+        owner = config.users.users.${config.hostSpec.username}.name;
+        inherit (config.users.users.${config.hostSpec.username}) group;
+        path = "${config.hostSpec.home}/.config/Yubico/u2f_keys";
       };
 
       # extract password/username to /run/secrets-for-users/ so it can be used to create the user
-      "passwords/${configVars.username}".neededForUsers = true;
+      "passwords/${config.hostSpec.username}".neededForUsers = true;
       "passwords/msmtp" = { };
       # borg password required by nix-config/modules/nixos/backup
       "passwords/borg" = {
@@ -69,12 +64,12 @@ in
   # FIXME:(sops) We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
   system.activationScripts.sopsSetAgeKeyOwnership =
     let
-      ageFolder = "${homeDirectory}/.config/sops/age";
-      user = config.users.users.${configVars.username}.name;
-      group = config.users.users.${configVars.username}.group;
+      ageFolder = "${config.hostSpec.home}/.config/sops/age";
+      user = config.users.users.${config.hostSpec.username}.name;
+      group = config.users.users.${config.hostSpec.username}.group;
     in
     ''
       mkdir -p ${ageFolder} || true
-      chown -R ${user}:${group} ${homeDirectory}/.config
+      chown -R ${user}:${group} ${config.hostSpec.home}/.config
     '';
 }

@@ -1,9 +1,7 @@
 # NOTE: ... is needed because dikso passes diskoFile
 {
-
-  lib,
   pkgs,
-  configVars,
+  config,
   ...
 }:
 {
@@ -55,7 +53,7 @@
                       ];
                     };
                     "@persist" = {
-                      mountpoint = "${configVars.persistFolder}";
+                      mountpoint = "${config.hostSpec.persistFolder}";
                       mountOptions = [
                         "compress=zstd"
                         "noatime"
@@ -97,8 +95,8 @@
                 };
                 # Whether to add a boot.initrd.luks.devices entry for the this disk.
                 # We only want to unlock cryptroot interactively.
-                # You must have a /etc/crypttab entry set up to auto unlock the drive using a key on cryptroot (see /hosts/ghost/default.nix)
-                initrdUnlock = if configVars.isMinimal then true else false;
+                # You must have a /etc/crypttab entry set up to auto unlock the drive using a key on cryptroot (see /hosts/linux/ghost/default.nix)
+                initrdUnlock = if config.hostSpec.isMinimal then true else false;
 
                 # subvolumes must set a mountpoint in order to be mounted,
                 # unless their parent is mounted
@@ -134,8 +132,8 @@
                 passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
                 # Whether to add a boot.initrd.luks.devices entry for the this disk.
                 # We only want to unlock cryptroot interactively.
-                # You must have a /etc/crypttab entry set up to auto unlock the drive using a key on cryptroot (see /hosts/ghost/default.nix)
-                initrdUnlock = if configVars.isMinimal then true else false;
+                # You must have a /etc/crypttab entry set up to auto unlock the drive using a key on cryptroot (see /hosts/linux/ghost/default.nix)
+                initrdUnlock = if config.hostSpec.isMinimal then true else false;
 
                 settings = {
                   allowDiscards = true;

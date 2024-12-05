@@ -1,10 +1,14 @@
-{ configVars, ... }:
+{ ... }:
 {
   imports = [
-    #################### Required Configs ####################
-    common/core # required
+    #
+    # ========== Required Configs ==========
+    #
+    common/core
 
-    #################### Host-specific Optional Configs ####################
+    #
+    # ========== Host-specific Optional Configs ==========
+    #
     common/optional/sops.nix
     common/optional/helper-scripts
 
@@ -14,8 +18,4 @@
 
   services.yubikey-touch-detector.enable = true;
 
-  home = {
-    username = configVars.username;
-    homeDirectory = "/home/${configVars.username}";
-  };
 }

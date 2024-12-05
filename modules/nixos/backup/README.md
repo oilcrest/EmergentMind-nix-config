@@ -85,7 +85,7 @@ Depending how you configure the borg server, user's home locations may not be in
 
 ```nix
 
-nix-config/hosts/ghost/default.nix
+nix-config/hosts/linux/ghost/default.nix
 
 --------------------
 
@@ -94,12 +94,12 @@ nix-config/hosts/ghost/default.nix
   services.backup = {
     enable = true;
     borgBackupStartTime = "02:00:00";
-    borgServer = "${configVars.networking.subnets.oops.ip}";
-    borgUser = "${configVars.username}";
-    borgPort = "${builtins.toString configVars.networking.subnets.oops.port}";
-    borgBackupPath = "/var/services/homes/${configVars.username}/backups";
-    borgNotifyFrom = "${configVars.email.notifier}";
-    borgNotifyTo = "${configVars.email.backup}";
+    borgServer = "${config.hostSpec.networking.subnets.oops.ip}";
+    borgUser = "${config.hostSpec.username}";
+    borgPort = "${builtins.toString config.hostSpec.networking.subnets.oops.port}";
+    borgBackupPath = "/var/services/homes/${config.hostSpec.username}/backups";
+    borgNotifyFrom = "${config.hostSpec.email.notifier}";
+    borgNotifyTo = "${config.hostSpec.email.backup}";
   };
 
 ...

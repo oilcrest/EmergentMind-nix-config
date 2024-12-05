@@ -2,12 +2,15 @@
   config,
   lib,
   pkgs,
-  outputs,
-  configLib,
   ...
 }:
 {
-  imports = (configLib.scanPaths ./.) ++ (builtins.attrValues outputs.homeManagerModules);
+  imports = lib.flatten [
+    (lib.custom.scanPaths ./.)
+    (map lib.custom.relativeToRoot [
+      "modules/home-manager"
+    ])
+  ];
 
   home = {
     username = lib.mkDefault "media";
@@ -25,15 +28,6 @@
       # Packages that don't have custom configs go here
       nix-tree
       ;
-  };
-
-  nixpkgs = {
-    overlays = builtins.attrValues outputs.overlays;
-    config = {
-      allowUnfree = true;
-      # Workaround for https://github.com/nix-community/home-manager/issues/2942
-      allowUnfreePredicate = (_: true);
-    };
   };
 
   nix = {

@@ -1,15 +1,21 @@
 {
   lib,
   pkgs,
-  configLib,
-  configVars,
   ...
 }:
-let
-  sshPort = configVars.networking.ports.tcp.ssh;
-in
 {
-  imports = [ (configLib.relativeToRoot "hosts/common/users/${configVars.username}") ];
+  imports = lib.flatten [
+    (map lib.custom.relativeToRoot [
+      "modules/common/host-spec.nix"
+      "hosts/common/users/ta"
+      "hosts/common/users/ta/nixos.nix"
+    ])
+  ];
+
+  hostSpec = {
+    isMinimal = lib.mkForce true;
+    username = "ta";
+  };
 
   fileSystems."/boot".options = [ "umask=0077" ]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -31,7 +37,7 @@ in
     qemuGuest.enable = true;
     openssh = {
       enable = true;
-      ports = [ sshPort ];
+      ports = [ 22 ];
       settings.PermitRootLogin = "yes";
     };
   };

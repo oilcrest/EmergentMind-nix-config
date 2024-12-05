@@ -2,12 +2,10 @@
   config,
   pkgs,
   lib,
-  configVars,
   ...
 }:
 let
-  homeDirectory =
-    if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
+  homeDirectory = "${config.hostSpec.home}";
   yubikey-up =
     let
       yubikeyIds = lib.concatStringsSep " " (

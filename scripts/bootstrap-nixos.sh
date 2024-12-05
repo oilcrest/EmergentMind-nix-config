@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -eo pipefail
 
 # User variables
@@ -163,17 +164,17 @@ function nixos_anywhere() {
 
 	# when using luks, disko expects a passphrase on /tmp/disko-password, so we set it for now and will update the passphrase later
 	# via the config
-	# green "Preparing a temporary password for disko."
+	green "Preparing a temporary password for disko."
 	green "[Optional] Set disk encryption passphrase:"
 	read -s luks_passphrase
 	if [ -n "$luks_passphrase" ]; then
 		$ssh_root_cmd "/bin/sh -c 'echo \'$luks_passphrase\' > /tmp/disko-password'"
 	else
-		$ssh_root_cmd "/bin/sh -c 'echo \'passphrase\' > /tmp/disko-password'"
+		$ssh_root_cmd "/bin/sh -c 'echo passphrase > /tmp/disko-password'"
 	fi
 	green "Generating hardware-config.nix for $target_hostname and adding it to the nix-config."
 	$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
-	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/"$target_hostname"/hardware-configuration.nix
+	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/linux/"$target_hostname"/hardware-configuration.nix
 
 	# --extra-files here picks up the ssh host key we generated earlier and puts it onto the target machine
 	SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --ssh-port "$ssh_port" --extra-files "$temp" --flake .#"$target_hostname" root@"$target_destination"

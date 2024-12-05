@@ -1,6 +1,5 @@
 {
   inputs,
-  pkgs,
   system,
   ...
 }:
@@ -9,10 +8,11 @@
     src = ./.;
     default_stages = [ "pre-commit" ];
     hooks = {
+      # ========== General ==========
       check-added-large-files.enable = true;
       check-case-conflicts.enable = true;
       check-executables-have-shebangs.enable = true;
-      check-shebang-scripts-are-executable.enable = false;
+      check-shebang-scripts-are-executable.enable = false; # many of the scripts in the config aren't executable because they don't need to be.
       check-merge-conflicts.enable = true;
       detect-private-keys.enable = true;
       fix-byte-order-marker.enable = true;
@@ -37,10 +37,10 @@
         types = [ "symlink" ];
       };
 
-      nixfmt-rfc-style = {
-        enable = true;
-        #        package = pkgs.nixfmt-rfc-style;
-      };
+      # ========== nix ==========
+      nixfmt-rfc-style.enable = true;
+
+      # ========== shellscripts ==========
       shfmt.enable = true;
 
       end-of-file-fixer.enable = true;

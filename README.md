@@ -46,13 +46,16 @@ Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emer
 
 ## Feature Highlights
 
-- Flake-based multi-host, multi-user NixOS and Home-Manager configurations
-  - Core configs for hosts and users
-  - Modular, optional configs for user and host-specific needs
+- Flake-based multi-host, multi-user configurations for NixOS, Darwin, and Home-Manager
+
+  - Core configs for hosts and users dynamically handle nixos- or darwin-based host specifications
+  - Optional configs for user and host-specific needs
+  - Facilitation for custom modules, overlays, packages, and library
+
 - Secrets management via sops-nix and a _private_ nix-secrets repo which is included as a flake input
-- Declarative LUKS encrypted btrfs partitions via disko
+- Declarative, LUKS-encrypted btrfs partitions via disko
 - Automated remote-bootstrapping of NixOS, nix-config, and _private_ nix-secrets
-- Multiple YubiKey device handling and agent forwarding for touch-based/passwordless authentication during:
+- Handles multiple YubiKey devices and agent forwarding for touch-based/passwordless authentication during:
 
     - login
     - sudo
@@ -69,13 +72,13 @@ Completed features will be added here as each stage is complete.
 
 ## Requirements
 
-- NixOS 23.11 or later to properly receive passphrase prompts when building in the private nix-secrets repo
+- When using NixOS, v23.11 or later is required to properly receive passphrase prompts when building in the private nix-secrets repo
 - Patience
 - Attention to detail
-- Persistance
+- Persistence
 - More disk space
 
-This is a personalized configuration that has several technical requirements to build successfully. This nix-config will serve you best as a reference, learning resource, and template for crafting your own configuration. I am continuing to provide resources throughout the repository and my website to help but you must also experiment and learn as you go to be successful to create a NixOS environment that will meet your needs.
+This is a personalized configuration that has several technical requirements to build successfully. This nix-config will serve you best as a reference, learning resource, and template for crafting your own configuration. I am continuing to provide resources throughout this repository, my [YouTube channel](https://www.youtube.com/@Emergent_Mind), and [website](https://unmovedcentre.com) to help. For you to be successful, you must also experiment and learn as you go to create a nix environment that suits your needs.
 
 ## Structure Quick Reference
 
@@ -84,7 +87,7 @@ For details about design concepts, constraints, and how structural elements inte
 For a large screenshot of the concept diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
 
 <div align="center">
-<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v4.png" /></a>
+<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v5.png" /></a>
 </div>
 
 - `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for  manual bootstrapping tasks (`nix develop` or `nix-shell`).
@@ -95,23 +98,33 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
         - `<user>/keys` - Public keys for the user that are symlinked to ~/.ssh
-  - `genoa` - stage 6
-  - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (12 core), 64MB RAM, Radeon RX5600XT
-  - `grief` - Lab - Qemu VM
-  - `gooey` - stage x
-  - `guppy` - Remote Install Lab - Qemu VM
-  - `gusto` - Theatre - Asus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
+  - `dariwn` - machine specific configurations for hosts on dariwn systems
+      - Currently not using any darwin hosts
+  - `linux` - machine specific configurations for hosts on linux systems
+      - `genoa` - stage 6
+      - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64MB RAM, Radeon RX5600XT
+      - `grief` - Lab - Qemu VM
+      - `gooey` - stage x
+      - `guppy` - Remote Install Lab - Qemu VM
+      - `gusto` - Theatre - Asus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
+      - `iso` - custom NixOS ISO that incorporates some quality of life configuration for use during installations and recovery
 - `home/<user>` - Home-manager configurations, built automatically during host rebuilds.
   - `common` - shared home-manager configurations consumed the user's machine specific ones.
     - `core` - Home-manager configurations present for user across all machines. This is a hard rule! If something isn't core, it is optional.
     - `optional` - Optional home-manager configurations that can be added for specific machines. These can be added by category (e.g. options/media) or individually (e.g. options/media/vlc.nix) as needed.
       The home-manager core and options are defined in host-specific .nix files housed in `home/<user>`.
-- `lib` - Custom library used throughout the nix-config to make import paths more readable.
-- `modules` - Custom modules to enable special functionality for nixos or home-manager oriented configurations.
-- `nixos-installer` - A stripped down version of the main nix-config flake used exclusively for generating ISOs and during installation of NixOS and nix-config on hosts.
+- `lib` - Custom library used throughout the nix-config to make import paths more readable. Accessible via `lib.custom`.
+- `modules` - Custom modules to enable special functionality and options.
+    - `common` - Custom modules that will work on either linux or dariwn but that aren't specific to home-manager
+    - `darwin` - Custom modules specific to dariwn-based hosts
+    - `home-manager` - Custom modules to home-manager
+    - `nixos` - Custom modules specific to linux-based hosts
+- `nixos-installer` - A stripped down version of the main nix-config flake used exclusively during installation of NixOS and nix-config on hosts.
 - `overlays` - Custom modifications to upstream packages.
 - `pkgs` - Custom packages meant to be shared or upstreamed.
-- `vars` - Custom variables used throughout the nix-config. Most of the variables are focused on the primary user across all hosts.
+    - `common` - Custom packages that will work on either linux or dariwn
+    - `darwin` - Custom packages specific to dariwn-based hosts
+    - `nixos` - Custom packages specific to linux-based hosts
 - `scripts` - Custom scripts for automation, including remote installation and bootstrapping of NixOS and nix-config.
 
 ## Secrets Management
@@ -122,7 +135,7 @@ For details on how this is accomplished, how to approach different scenarios, an
 
 ## Support
 
-Thank you to my generous supporters!
+Sincere thanks to all of my generous supporters!
 
 If you find what I do helpful, please consider supporting my work using one of the links under "Sponsor this project" on the right-hand column of this page.
 
@@ -145,9 +158,9 @@ I intentionally keep all of my content ad-free but some platforms, such as YouTu
 Those who have heavily influenced this strange journey into the unknown.
 
 - [FidgetingBits](https://github.com/fidgetingbits) - You told me there was a strange door that could be opened. I'm truly grateful.
+- [Mic92](https://github.com/Mic92) and [Lassulus](https://github.com/Lassulus) - My nix-config leverages many of the fantastic tools that these two people maintain, such as sops-nix, disko, and nixos-anywhere.
 - [Misterio77](https://github.com/Misterio77) - Structure and reference.
 - [Ryan Yin](https://github.com/ryan4yin/nix-config) - A treasure trove of useful documentation and ideas.
-- [Mic92](https://github.com/Mic92) and [Lassulus](https://github.com/Lassulus) - My nix-config leverages many of the fantastic tools that these two people maintain, such as sops-nix, disko, and nixos-anywhere.
 - [VimJoyer](https://github.com/vimjoyer) - Excellent videos on the high-level concepts required to navigate NixOS.
 
 ---

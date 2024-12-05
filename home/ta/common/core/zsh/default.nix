@@ -1,4 +1,9 @@
-{ pkgs, configVars, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   programs.zsh = {
     enable = true;
@@ -12,30 +17,35 @@
     history.size = 10000;
     history.share = true;
 
-    plugins = [
-      {
-        name = "powerlevel10k-config";
-        src = ./p10k;
-        file = "p10k.zsh";
-      }
-      {
-        name = "zsh-powerlevel10k";
-        src = "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/";
-        file = "powerlevel10k.zsh-theme";
-      }
-      {
-        name = "zsh-term-title";
-        src = "${pkgs.zsh-term-title}/share/zsh/zsh-term-title/";
-      }
-      {
-        name = "cd-gitroot";
-        src = "${pkgs.cd-gitroot}/share/zsh/cd-gitroot";
-      }
-      {
-        name = "zhooks";
-        src = "${pkgs.zhooks}/share/zsh/zhooks";
-      }
-    ];
+    plugins =
+      [
+        {
+          name = "powerlevel10k-config";
+          src = ./p10k;
+          file = "p10k.zsh";
+        }
+        {
+          name = "zsh-powerlevel10k";
+          src = "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/";
+          file = "powerlevel10k.zsh-theme";
+        }
+      ]
+      # The iso doesn't use our overlays, so don't add custom packagesa
+      #FIXME:move these to an optional custom plugins module and remove iso check
+      ++ lib.optionals (config.hostSpec.hostName != "iso") [
+        {
+          name = "zsh-term-title";
+          src = "${pkgs.zsh-term-title}/share/zsh/zsh-term-title/";
+        }
+        {
+          name = "cd-gitroot";
+          src = "${pkgs.cd-gitroot}/share/zsh/cd-gitroot";
+        }
+        {
+          name = "zhooks";
+          src = "${pkgs.zhooks}/share/zsh/zhooks";
+        }
+      ];
 
     initExtraFirst = ''
       # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.

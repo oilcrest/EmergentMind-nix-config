@@ -8,23 +8,23 @@
 {
   inputs,
   lib,
-  configVars,
-  configLib,
   ...
 }:
 {
   imports = lib.flatten [
-    #################### Every Host Needs This ####################
+    #
+    # ========== Hardware ==========
+    #
     ./hardware-configuration.nix
-
-    #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     inputs.hardware.nixosModules.common-pc-ssd
 
-    #################### Disk Layout ####################
+    #
+    # ========== Disk Layout ==========
+    #
     inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
+    (lib.custom.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
     {
       _module.args = {
         disk = "/dev/vda";
@@ -32,21 +32,34 @@
       };
     }
 
-    (map configLib.relativeToRoot [
-      #################### Required Configs ####################
+    (map lib.custom.relativeToRoot [
+      #
+      # ========== Required Configs ==========
+      #
       "hosts/common/core"
+      "hosts/common/core/nixos.nix"
 
-      #################### Host-specific Optional Configs ####################
+      #
+      # ========== Optional Configs ==========
+      #
       #"hosts/common/optional/initrd-ssh.nix"
       "hosts/common/optional/services/openssh.nix"
 
     ])
   ];
 
+  #
+  # ========== Host Specification ==========
+  #
+
+  hostSpec = {
+    hostName = "guppy";
+    useYubikey = lib.mkForce true;
+  };
+
   services.gnome.gnome-keyring.enable = true;
 
   networking = {
-    hostName = "guppy";
     networkmanager.enable = true;
     enableIPv6 = false;
   };

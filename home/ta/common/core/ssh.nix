@@ -1,7 +1,5 @@
 {
   config,
-  configVars,
-  configLib,
   lib,
   ...
 }:
@@ -15,11 +13,11 @@ let
     "gusto"
   ];
   # add my domain to each yubikey host
-  yubikeyDomains = map (h: "${h}.${configVars.domain}") yubikeyHosts;
+  yubikeyDomains = map (h: "${h}.${config.hostSpec.domain}") yubikeyHosts;
   yubikeyHostAll = yubikeyHosts ++ yubikeyDomains;
   yubikeyHostsString = lib.concatStringsSep " " yubikeyHostAll;
 
-  pathtokeys = configLib.relativeToRoot "hosts/common/users/${configVars.username}/keys";
+  pathtokeys = lib.custom.relativeToRoot "hosts/common/users/${config.hostSpec.username}/keys";
   yubikeys =
     lib.lists.forEach (builtins.attrNames (builtins.readDir pathtokeys))
       # Remove the .pub suffix
@@ -48,8 +46,8 @@ let
     lib.lists.map (host: {
       "${host}" = lib.hm.dag.entryAfter [ "yubikey-hosts" ] {
         host = host;
-        hostname = "${host}.${configVars.domain}";
-        port = configVars.networking.ports.tcp.ssh;
+        hostname = "${host}.${config.hostSpec.domain}";
+        port = config.hostSpec.networking.ports.tcp.ssh;
       };
     }) vanillaHosts
   );
@@ -86,7 +84,7 @@ in
       };
       "gooey" = lib.hm.dag.entryAfter [ "yubikey-hosts" ] {
         host = "gooey";
-        hostname = "gooey.${configVars.domain}";
+        hostname = "gooey.${config.hostSpec.domain}";
         user = "pi";
         forwardAgent = true;
         identitiesOnly = true;
@@ -94,9 +92,9 @@ in
       };
       "oops" = lib.hm.dag.entryAfter [ "yubikey-hosts" ] {
         host = "oops";
-        hostname = "${configVars.networking.subnets.oops.ip}";
-        user = "${configVars.username}";
-        port = configVars.networking.subnets.oops.port;
+        hostname = "${config.hostSpec.networking.subnets.oops.ip}";
+        user = "${config.hostSpec.username}";
+        port = config.hostSpec.networking.subnets.oops.port;
         forwardAgent = true;
         identitiesOnly = true;
         identityFile = [
@@ -105,15 +103,15 @@ in
         ];
       };
       "cakes" = {
-        host = "${configVars.networking.external.cakes.name}";
-        hostname = "${configVars.networking.external.cakes.ip}";
-        user = "${configVars.networking.external.cakes.username}";
+        host = "${config.hostSpec.networking.external.cakes.name}";
+        hostname = "${config.hostSpec.networking.external.cakes.ip}";
+        user = "${config.hostSpec.networking.external.cakes.username}";
         localForwards = [
           {
             bind.address = "localhost";
-            bind.port = configVars.networking.external.cakes.localForwardsPort;
+            bind.port = config.hostSpec.networking.external.cakes.localForwardsPort;
             host.address = "localhost";
-            host.port = configVars.networking.external.cakes.localForwardsPort;
+            host.port = config.hostSpec.networking.external.cakes.localForwardsPort;
           }
         ];
       };

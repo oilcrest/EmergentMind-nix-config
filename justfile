@@ -61,7 +61,7 @@ update-nix-secrets:
 iso:
   # If we dont remove this folder, libvirtd VM doesnt run with the new iso...
   rm -rf result
-  nix build ./nixos-installer#nixosConfigurations.iso.config.system.build.isoImage
+  nix build .#nixosConfigurations.iso.config.system.build.isoImage && ln -sf result/iso/*.iso latest.iso
 
 iso-install DRIVE: iso
   sudo dd if=$(eza --sort changed result/iso/*.iso | tail -n1) of={{DRIVE}} bs=4M status=progress oflag=sync

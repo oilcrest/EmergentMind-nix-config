@@ -1,19 +1,42 @@
+#FIXME: Move attrs that will only work on linux to nixos.nix
+#FIXME: if pulling in homemanager for isMinimal maybe set up conditional for some packages
 {
   config,
   lib,
   pkgs,
-  outputs,
-  configLib,
+  hostSpec,
   ...
 }:
+let
+  platform = if hostSpec.isDarwin then "darwin" else "nixos";
+in
 {
-  imports = (configLib.scanPaths ./.) ++ (builtins.attrValues outputs.homeManagerModules);
+  imports = lib.flatten [
+    (map lib.custom.relativeToRoot [
+      "modules/common/host-spec.nix"
+      "modules/home-manager"
+    ])
+    ./${platform}.nix
+    #   ./zsh
+    ./nixvim
+    ./bash.nix
+    ./bat.nix
+    ./direnv.nix
+    ./fonts.nix
+    ./git.nix
+    ./kitty.nix
+    ./screen.nix
+    ./ssh.nix
+    ./zoxide.nix
+  ];
+
+  inherit hostSpec;
 
   services.ssh-agent.enable = true;
 
   home = {
-    username = lib.mkDefault "ta";
-    homeDirectory = lib.mkDefault "/home/${config.home.username}";
+    username = lib.mkDefault config.hostSpec.username;
+    homeDirectory = lib.mkDefault config.hostSpec.home;
     stateVersion = lib.mkDefault "23.05";
     sessionPath = [
       "$HOME/.local/bin"
@@ -90,15 +113,6 @@
       ;
   };
 
-  nixpkgs = {
-    overlays = builtins.attrValues outputs.overlays;
-    config = {
-      allowUnfree = true;
-      # Workaround for https://github.com/nix-community/home-manager/issues/2942
-      allowUnfreePredicate = (_: true);
-    };
-  };
-
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {
@@ -110,9 +124,7 @@
     };
   };
 
-  programs = {
-    home-manager.enable = true;
-  };
+  programs.home-manager.enable = true;
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";

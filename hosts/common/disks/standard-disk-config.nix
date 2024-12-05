@@ -4,7 +4,7 @@
   disk ? "/dev/vda",
   withSwap ? false,
   swapSize,
-  configVars,
+  config,
   ...
 }:
 {
@@ -45,7 +45,7 @@
                     ];
                   };
                   "@persist" = {
-                    mountpoint = "${configVars.persistFolder}";
+                    mountpoint = "${config.hostSpec.persistFolder}";
                     mountOptions = [
                       "compress=zstd"
                       "noatime"

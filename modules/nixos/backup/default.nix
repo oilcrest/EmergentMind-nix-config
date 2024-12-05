@@ -2,7 +2,7 @@
   pkgs,
   lib,
   config,
-  configVars,
+  inputs,
   ...
 }:
 let
@@ -14,7 +14,7 @@ let
       false;
   hostName = config.networking.hostName;
   homeBase = if pkgs.stdenv.isLinux then "/home" else "/Users";
-  homeDirectory = "${homeBase}/${configVars.username}";
+  homeDirectory = "${config.hostSpec.home}";
   rootHome = if pkgs.stdenv.isLinux then config.users.users.root.home else "/var/root";
   excludes = lib.flatten [
     "**/.direnv"
@@ -93,7 +93,7 @@ in
     };
     borgPort = lib.mkOption {
       type = lib.types.str; # FIXME:(borg) int?
-      default = "${builtins.toString configVars.networking.ports.tcp.ssh}";
+      default = "${builtins.toString config.hostSpec.networking.ports.tcp.ssh}";
       description = "The ssh port to use for the borg server";
     };
     borgBackupPath = lib.mkOption {
@@ -109,12 +109,12 @@ in
     borgNotifyFrom = lib.mkOption {
       type = lib.types.str;
       default = "box@${config.hostSpec.domain}";
-      description = "The email address that msmtp notificaitons will be sent from";
+      description = "The email address that msmtp notifications will be sent from";
     };
     borgNotifyTo = lib.mkOption {
       type = lib.types.str;
       default = "admin@${config.hostSpec.domain}";
-      description = "The email address that msmtp notificaitons will be sent to";
+      description = "The email address that msmtp notifications will be sent to";
     };
     borgRemotePath = lib.mkOption {
       type = lib.types.str;
@@ -128,7 +128,7 @@ in
     };
     borgCacheDir =
       let
-        persistFolder = lib.optionalString isImpermanent configVars.persistFolder;
+        persistFolder = lib.optionalString isImpermanent config.hostSpec.persistFolder;
       in
       lib.mkOption {
         type = lib.types.str;
@@ -530,8 +530,8 @@ in
           {
             tmpfiles.rules =
               let
-                user = config.users.users.${configVars.username}.name;
-                group = config.users.users.${configVars.username}.group;
+                user = config.users.users.${config.hostSpec.username}.name;
+                group = config.users.users.${config.hostSpec.username}.group;
               in
               # https://www.man7.org/linux/man-pages/man5/tmpfiles.d.5.html
               [ "d ${homeDirectory}/mount/backup/ 0750 ${user} ${group} -" ];

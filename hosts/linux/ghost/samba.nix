@@ -1,12 +1,12 @@
-#FIXME(structure) this needs a proper home but not sure where yet
+#FIXME:(structure) this needs a proper home but not sure where yet
 
 # Once this service is started for the first time
 # add any required users and passwords
 # `sudo smbpasswd -a <user>` and follow prompts
 
-{ pkgs, configVars, ... }:
+{ pkgs, config, ... }:
 let
-  localPrefix = configVars.networking.subnets.prefix.lan;
+  localPrefix = config.hostSpec.networking.subnets.prefix.lan;
 in
 {
   networking.firewall = {
@@ -52,7 +52,7 @@ in
   services.avahi = {
     publish.enable = true;
     publish.userServices = true;
-    #FIXME the following comment and option are from wiki.nixos.org example. confirm and fix
+    #FIXME: the following comment and option are from wiki.nixos.org example. confirm and fix
     # Not one hundred percent sure if this is needed- if it aint broke, don't fix it
     nssmdns4 = true;
     enable = true;

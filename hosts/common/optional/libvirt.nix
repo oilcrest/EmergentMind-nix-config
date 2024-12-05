@@ -1,4 +1,4 @@
-{ pkgs, configVars, ... }:
+{ pkgs, config, ... }:
 # FIXME:(qemu) Should we merge all virtualization stuff, like podman?
 {
   # FIXME:(qemu) Revisit if required
@@ -49,7 +49,7 @@
     pkgs.qemu
   ];
 
-  users.users.${configVars.username} = {
+  users.users.${config.hostSpec.username} = {
     extraGroups = [ "libvirtd" ];
   };
 }

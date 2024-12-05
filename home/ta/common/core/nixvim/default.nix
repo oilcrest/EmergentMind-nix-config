@@ -3,7 +3,12 @@
 # Some fantastic inspiration for this config
 # https://seniormars.com/posts/neovim-workflow/
 
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  lib,
+  ...
+}:
 {
   imports = [
     inputs.nixvim.homeManagerModules.nixvim
@@ -13,6 +18,8 @@
   ];
 
   programs.nixvim = {
+    nixpkgs.pkgs = import <nixpkgs> { };
+
     enable = true;
     enableMan = true; # install man pages for nixvim options
 

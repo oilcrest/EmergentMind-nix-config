@@ -2,11 +2,9 @@
 # from default.nix in the parent directory. Could be trouble when debugging
 # down the road. Noted in long term roadmap.
 {
-  input,
-  outputs,
-  configLib,
+  lib,
   ...
 }:
 {
-  imports = (configLib.scanPaths ./.);
+  imports = (lib.custom.scanPaths ./.);
 }

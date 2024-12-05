@@ -2,11 +2,10 @@
 {
   config,
   lib,
-  configLib,
   ...
 }:
 let
-  flakeRoot = configLib.relativeToRoot "./.";
+  flakeRoot = lib.custom.relativeToRoot "./.";
 in
 {
   options = {
