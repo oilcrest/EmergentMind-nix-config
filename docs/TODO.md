@@ -5,6 +5,8 @@
 ## Short Term
 
 - get flameshot working, grimshot isn't adequate
+- issue 14
+- /home/ta/.config/mimeapps.list causes a collisions when rebuilding home-manager
 
 ### Current roadmap focus items
 
@@ -13,7 +15,6 @@
     - add check for useYubikey flag in sops.nix
 - Re-implement modules to make use of options for enablement
 
-- /home/ta/.config/mimeapps.list causes a collisions when rebuilding home-manager
 - update docs in nix-secrets
 
 #### General workflow improvements
