@@ -23,7 +23,7 @@
     #
     bindn = [
       # allow tab selection using mouse
-      #      ", mouse:272, hy3:focustab, mouse"
+      ", mouse:272, hy3:focustab, mouse"
     ];
     #
     # ========== Repeat Binds ==========
@@ -144,7 +144,7 @@
         #NOTE: window resizing is under "Repeat Binds" above
 
         # Close the focused/active window
-        #       "SHIFTALT,q,hy3:killactive"
+        "SHIFTALT,q,hy3:killactive"
         "SHIFTALT,q,killactive"
 
         # Fullscreen
@@ -156,13 +156,13 @@
         "SHIFTALT, p, pin, active" # pins a floating window (i.e. show it on all workspaces)
 
         # Splits groups
-        #        "ALT,v,hy3:makegroup,v" # make a vertical split
-        #        "SHIFTALT,v,hy3:makegroup,h" # make a horizontal split
-        #        "ALT,x,hy3:changegroup,opposite" # toggle btwn splits if untabbed
+        "ALT,v,hy3:makegroup,v" # make a vertical split
+        "SHIFTALT,v,hy3:makegroup,h" # make a horizontal split
+        "ALT,x,hy3:changegroup,opposite" # toggle btwn splits if untabbed
         "ALT,s,togglesplit"
 
         # Tab groups
-        #        "ALT,g,hy3:changegroup,toggletab" # tab or untab the group
+        "ALT,g,hy3:changegroup,toggletab" # tab or untab the group
         #"ALT,t,lockactivegroup,toggle"
         "ALT,apostrophe,changegroupactive,f"
         "SHIFTALT,apostrophe,changegroupactive,b"
@@ -178,18 +178,15 @@
         "SHIFTALT,y,movetoworkspace,special"
 
         # Move window to workspace
-        #        (map (n: "SHIFTALT,${n},hy3:movetoworkspace,name:${n}") workspaces)
-        (map (n: "SHIFTALT,${n},movetoworkspace,name:${n}") workspaces)
+        (map (n: "SHIFTALT,${n},hy3:movetoworkspace,name:${n}") workspaces)
 
         # Move focus from active window to window in specified direction
         #(lib.mapAttrsToList (key: direction: "ALT,${key}, exec, customMoveFocus ${direction}") directions)
-        #        (lib.mapAttrsToList (key: direction: "ALT,${key},hy3:movefocus,${direction},warp") directions)
-        (lib.mapAttrsToList (key: direction: "ALT,${key},movefocus,${direction}") directions)
+        (lib.mapAttrsToList (key: direction: "ALT,${key},hy3:movefocus,${direction},warp") directions)
 
         # Move windows
         #(lib.mapAttrsToList (key: direction: "SHIFTALT,${key}, exec, customMoveWindow ${direction}") directions)
-        #        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},hy3:movewindow,${direction}") directions)
-        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindow,${direction}") directions)
+        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},hy3:movewindow,${direction}") directions)
 
         # Move workspace to monitor in specified direction
         (lib.mapAttrsToList (

@@ -27,7 +27,7 @@
     };
 
     plugins = [
-      #      pkgs.hyprlandPlugins.hy3
+      pkgs.hyprlandPlugins.hy3
     ];
 
     settings = {
