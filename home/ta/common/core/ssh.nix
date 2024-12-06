@@ -17,7 +17,7 @@ let
   yubikeyHostAll = yubikeyHosts ++ yubikeyDomains;
   yubikeyHostsString = lib.concatStringsSep " " yubikeyHostAll;
 
-  pathtokeys = lib.custom.relativeToRoot "hosts/common/users/${config.hostSpec.username}/keys";
+  pathtokeys = lib.custom.relativeToRoot "hosts/common/users/primary/keys";
   yubikeys =
     lib.lists.forEach (builtins.attrNames (builtins.readDir pathtokeys))
       # Remove the .pub suffix

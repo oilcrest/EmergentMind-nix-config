@@ -16,8 +16,8 @@
     inputs.home-manager.nixosModules.home-manager
     (map lib.custom.relativeToRoot [
       "modules/common/host-spec.nix"
-      "hosts/common/users/ta/default.nix"
-      "hosts/common/users/ta/nixos.nix"
+      "hosts/common/users/primary/default.nix"
+      "hosts/common/users/primary/nixos.nix"
     ])
   ];
 

@@ -9,7 +9,6 @@ let
   handle = config.hostSpec.handle;
   publicGitEmail = config.hostSpec.email.gitHub;
   publicKey = "${config.home.homeDirectory}/.ssh/id_yubikey.pub";
-  username = config.hostSpec.username;
 in
 {
   programs.git = {
@@ -54,8 +53,8 @@ in
   # NOTE: To verify github.com update commit signatures, you need to manually import
   # https://github.com/web-flow.gpg... would be nice to do that here
   home.file.".ssh/allowed_signers".text = ''
-    ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/${username}/keys/id_maya.pub")}
-    ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/${username}/keys/id_mara.pub")}
-    ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/${username}/keys/id_manu.pub")}
+    ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/primary/keys/id_maya.pub")}
+    ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/primary/keys/id_mara.pub")}
+    ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/primary/keys/id_manu.pub")}
   '';
 }

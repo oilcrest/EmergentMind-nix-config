@@ -7,8 +7,8 @@
   imports = lib.flatten [
     (map lib.custom.relativeToRoot [
       "modules/common/host-spec.nix"
-      "hosts/common/users/ta"
-      "hosts/common/users/ta/nixos.nix"
+      "hosts/common/users/primary"
+      "hosts/common/users/primary/nixos.nix"
     ])
   ];
 

@@ -9,11 +9,6 @@
   ...
 }:
 let
-
-  #TODO: primaryUser* bindings should maybe be assigned values elsewhere but are
-  # needed for imports instead of using hostSpec to avoid infinite recursion
-  primaryUser = "ta";
-  primaryUserHandle = "emergentmind";
   platform = if isDarwin then "darwin" else "nixos";
   platformModules = "${platform}Modules";
 in
@@ -28,8 +23,8 @@ in
       "hosts/common/core/${platform}.nix"
       "hosts/common/core/sops.nix"
       #"hosts/common/core/services" #not used yet
-      "hosts/common/users/${primaryUser}"
-      "hosts/common/users/${primaryUser}/${platform}.nix"
+      "hosts/common/users/primary"
+      "hosts/common/users/primary/${platform}.nix"
     ])
   ];
 
@@ -37,8 +32,8 @@ in
   # ========== Core Host Specifications ==========
   #
   hostSpec = {
-    username = primaryUser;
-    handle = primaryUserHandle;
+    username = "ta";
+    handle = "emergentmind";
     inherit (inputs.nix-secrets)
       domain
       email
