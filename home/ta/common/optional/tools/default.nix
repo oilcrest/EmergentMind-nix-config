@@ -12,8 +12,8 @@
       #etcher #was disabled in nixpkgs due to dependency on insecure version of Electron
 
       # Productivity
+      drawio
       grimblast
-      #drawio #temporarily moved to stable because of build issue waiting for lock on this package for 20+mins
       libreoffice
 
       # Privacy
@@ -25,16 +25,12 @@
 
       # Media production
       audacity
+      blender
       gimp
       inkscape
       obs-studio
       # VM and RDP
       # remmina
-      ;
-
-    inherit (pkgs.stable)
-      blender
-      drawio
       ;
   };
   #Disabled for now. grimblast
