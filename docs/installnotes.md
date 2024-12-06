@@ -622,7 +622,7 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 
     ```bash
     $ cd nix-config
-    $ cp /etc/nixos/hardware-configuration.nix hosts/linux/grief/
+    $ cp /etc/nixos/hardware-configuration.nix hosts/nixos/grief/
     ```
 
 17. Add git user info so that the changes can be successfully committed and pushed

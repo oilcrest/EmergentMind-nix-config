@@ -98,9 +98,9 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
         - `<user>/keys` - Public keys for the user that are symlinked to ~/.ssh
-  - `dariwn` - machine specific configurations for hosts on dariwn systems
+  - `dariwn` - machine specific configurations for darwin-based hosts
       - Currently not using any darwin hosts
-  - `linux` - machine specific configurations for hosts on linux systems
+  - `nixos` - machine specific configurations for NixOS-based hosts
       - `genoa` - stage 6
       - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64MB RAM, Radeon RX5600XT
       - `grief` - Lab - Qemu VM
@@ -115,16 +115,16 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
       The home-manager core and options are defined in host-specific .nix files housed in `home/<user>`.
 - `lib` - Custom library used throughout the nix-config to make import paths more readable. Accessible via `lib.custom`.
 - `modules` - Custom modules to enable special functionality and options.
-    - `common` - Custom modules that will work on either linux or dariwn but that aren't specific to home-manager
+    - `common` - Custom modules that will work on either nixos or dariwn but that aren't specific to home-manager
     - `darwin` - Custom modules specific to dariwn-based hosts
     - `home-manager` - Custom modules to home-manager
-    - `nixos` - Custom modules specific to linux-based hosts
+    - `nixos` - Custom modules specific to nixos-based hosts
 - `nixos-installer` - A stripped down version of the main nix-config flake used exclusively during installation of NixOS and nix-config on hosts.
 - `overlays` - Custom modifications to upstream packages.
 - `pkgs` - Custom packages meant to be shared or upstreamed.
-    - `common` - Custom packages that will work on either linux or dariwn
+    - `common` - Custom packages that will work on either nixos or dariwn
     - `darwin` - Custom packages specific to dariwn-based hosts
-    - `nixos` - Custom packages specific to linux-based hosts
+    - `nixos` - Custom packages specific to nixos-based hosts
 - `scripts` - Custom scripts for automation, including remote installation and bootstrapping of NixOS and nix-config.
 
 ## Secrets Management

@@ -35,7 +35,7 @@
               };
             }
             ./minimal-configuration.nix
-            ../hosts/linux/${name}/hardware-configuration.nix
+            ../hosts/nixos/${name}/hardware-configuration.nix
 
             { networking.hostName = name; }
           ];
@@ -59,7 +59,7 @@
             ../hosts/common/disks/ghost.nix
             ./minimal-configuration.nix
             { networking.hostName = "ghost"; }
-            ../hosts/linux/ghost/hardware-configuration.nix
+            ../hosts/nixos/ghost/hardware-configuration.nix
           ];
         };
       };

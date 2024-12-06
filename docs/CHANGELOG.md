@@ -12,9 +12,9 @@ This is a significant refactor that involves several breaking changes.
 
 - Custom library functions previously accessed via `configLib` are now accessible via `lib.custom`. There were many scenarios where both `lib` and `configLib` were being passed as arguments. This change eliminates the need to pass `configLib`.
 - Support for both darwin and nixos platforms. This required some structural enhancements as described below
-- Several directory paths now have an additional layer of directories to separate files that are common to both darwin and linux/nixos systems or are specific to one.
+- Several directory paths now have an additional layer of directories to separate files that are common to both darwin and nixos systems or are specific to one.
 
-	- `linux` and `darwin` sub-directories were added to `nix-config/hosts/` to delineate between the different each hosts underlying system. E.g. `nix-config/hosts/linux/<hostname>`
+	- `nixos` and `darwin` sub-directories were added to `nix-config/hosts/` to delineate between the different each hosts underlying system. E.g. `nix-config/hosts/nixos/<hostname>`
 	- `common` and `darwin` directories have been added to `nix-config/modules`. One of the modules that was previously in `/nix-config/modules/nixos` has been moved to `/nix-config/modules/common`
 	- `common`, `darwin`, and `nixos` directories have been added to `nix-config/pkgs`
 
@@ -35,7 +35,7 @@ This is a significant refactor that involves several breaking changes.
 
 	- the iso now imports `nix-config/home/ta/common/core`.
 	- the iso is no longer considered minimal and therefore does not set the `isMinimal` flag to true.
-	- the iso has been moved from `nix-config/nixos-installer/iso` to `nix-config/hosts/linux/iso`
+	- the iso has been moved from `nix-config/nixos-installer/iso` to `nix-config/hosts/nixos/iso`
 	- the `just iso` recipe now creates a symlink called `nix-config/latest.iso` that links to `result/iso/foo.iso`
 
 - Documentation styling has been unified throughout nix-config to improve visual appearance and readability. This may not be to everyone's taste but I like it and at least it's now consistent throughout (unless I've missed something).

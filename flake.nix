@@ -17,7 +17,7 @@
       #
       # ========= Host Config Functions =========
       #
-      # Handle a given host config based on whether its underlying system is linux or darwin
+      # Handle a given host config based on whether its underlying system is nixos or darwin
       mkHost = host: isDarwin: {
         ${host} =
           let
@@ -38,10 +38,10 @@
               lib = nixpkgs.lib.extend (self: super: { custom = import ./lib { inherit (nixpkgs) lib; }; });
 
             };
-            modules = [ ./hosts/${if isDarwin then "darwin" else "linux"}/${host} ];
+            modules = [ ./hosts/${if isDarwin then "darwin" else "nixos"}/${host} ];
           };
       };
-      # Invoke mkHost for each host config that is declared for either linux or darwin
+      # Invoke mkHost for each host config that is declared for either nixos or darwin
       mkHostConfigs =
         hosts: isDarwin: lib.foldl (acc: set: acc // set) { } (lib.map (host: mkHost host isDarwin) hosts);
       # Return the hosts declared in the given directory
@@ -58,7 +58,7 @@
       # ========= Host Configurations =========
       #
       # Building configurations is available through `just rebuild` or `nixos-rebuild --flake .#hostname`
-      nixosConfigurations = mkHostConfigs (readHosts "linux") false;
+      nixosConfigurations = mkHostConfigs (readHosts "nixos") false;
       #darwinConfigurations = mkHostConfigs (readHosts "darwin") true;
 
       #

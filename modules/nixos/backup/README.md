@@ -85,7 +85,7 @@ Depending how you configure the borg server, user's home locations may not be in
 
 ```nix
 
-nix-config/hosts/linux/ghost/default.nix
+nix-config/hosts/nixos/ghost/default.nix
 
 --------------------
 
