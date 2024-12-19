@@ -37,7 +37,6 @@
       # ========== Required Configs ==========
       #
       "hosts/common/core"
-      "hosts/common/core/nixos.nix"
 
       #
       # ========== Optional Configs ==========
