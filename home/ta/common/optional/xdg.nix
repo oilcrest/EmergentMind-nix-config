@@ -4,7 +4,7 @@ let
   browser = [ "firefox.desktop" ];
   editor = [ "nvim.desktop" ];
   media = [ "vlc.desktop" ];
-  writer = [ "libreoffic-writer.desktop" ];
+  writer = [ "libreoffice-writer.desktop" ];
   spreadsheet = [ "libreoffice-calc.desktop" ];
   slidedeck = [ "libreoffice-impress.desktop" ];
   # Extensive list of associations here:
@@ -26,7 +26,6 @@ let
     "application/x-extension-xhtml" = browser;
     "application/x-extension-xht" = browser;
     "application/pdf" = browser;
-
     "application/mxf" = media;
     "application/sdp" = media;
     "application/smil" = media;
@@ -106,12 +105,22 @@ let
     "application/vnd.sun.xml.writer.global" = writer;
     "application/vnd.sun.xml.writer.template" = writer;
     "application/vnd.wordperfect" = writer;
+
+  };
+  removals = {
+    # Calibre steals odt association from libreoffic so need to remove
+    "application/vnd.oasis.opendocument.text" = [
+      "calibre-ebook-viewer.desktop"
+      "calibre-ebook-edit.desktop"
+      "calibre-gui.desktop"
+    ];
   };
 in
 {
   xdg.mime.enable = true;
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications = associations;
+  xdg.mimeApps.associations.removed = removals;
   xdg.mimeApps.associations.added = associations;
 
   home.packages = builtins.attrValues {
