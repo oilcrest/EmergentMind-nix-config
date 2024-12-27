@@ -65,6 +65,7 @@
       #FIXME:(hyprland) ws1 still appears on both DP-1 and DP-3 on reboot
       workspace = [
         "1, monitor:DP-1, default:true, persistent:true"
+        "2, monitor:DP-1, default:true"
         "3, monitor:DP-1, default:true"
         "4, monitor:DP-1, default:true"
         "5, monitor:DP-1, default:true"
