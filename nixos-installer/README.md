@@ -35,7 +35,7 @@ The configuration of the main flake, [/flake.nix](/flake.nix), is heavy, and it 
 - Find disk name from livecd with `lsblk`
 - Find RAM amount form livcde with `free -m`
 - Add `nixos-installer/flake.nix` entry, and pass disk name and swap
-- Add an age key to age_keys entry in nix-secrets (FIXME:(docs) This can be automated)
+- Add an age key to keys/age entry in nix-secrets (FIXME:(docs) This can be automated)
 - If you'll be using backup, add a borg passphrase to nix-secrets
 
 ## Steps to Deploying this flake
@@ -60,7 +60,7 @@ This will automatically setup the disks and install the nixos-installer flake us
 
 If you plan to use sops home-manager module on the target, you should first generate an age key for the target (if one
 doesn't already exist) and put the contents of the key.text file into the nix-secrets secrets.yaml file, under
-`age_keys`. Generate the age key using the following command:
+`keys/age`. Generate the age key using the following command:
 
 ```bash
 nix-shell -p age.out --run 'age-keygen'
@@ -317,7 +317,7 @@ The secondary drive will be unlocked and made available under /dev/mapper/crypts
 Here you should have a fully working system, but some stuff you still need to do:
 
 - login to proton
-- Add new u2f_keys to nix-secrets if a totally new host
+- Add new keys/u2f to nix-secrets if a totally new host
 - Recover any backup files needed
   - .mozilla
   - syncthing

@@ -245,8 +245,8 @@ function generate_host_age_key() {
 function generate_user_age_key() {
 	echo "First checking if ${target_hostname} age key already exists"
 	secret_file="${git_root}"/../nix-secrets/secrets.yaml
-	if ! sops -d --extract '["user_age_keys"]' "$secret_file" >/dev/null ||
-		! sops -d --extract "[\"user_age_keys\"][\"${target_hostname}\"]" "$secret_file" >/dev/null 2>&1; then
+	if ! sops -d --extract '["keys/age"]' "$secret_file" >/dev/null ||
+		! sops -d --extract "[\"keys/age\"][\"${target_hostname}\"]" "$secret_file" >/dev/null 2>&1; then
 		echo "Age key does not exist. Generating."
 		user_age_key=$(nix shell nixpkgs#age -c "age-keygen")
 		readarray -t entries <<<"$user_age_key"
@@ -254,7 +254,7 @@ function generate_user_age_key() {
 		public_key=$(echo "${entries[1]}" | rg key: | cut -f2 -d: | xargs)
 		key_name="${target_user}_${target_hostname}"
 		# shellcheck disable=SC2116,SC2086
-		sops --set "$(echo '["user_age_keys"]["'${key_name}'"] "'$secret_key'"')" "$secret_file"
+		sops --set "$(echo '["keys/age"]["'${key_name}'"] "'$secret_key'"')" "$secret_file"
 		update_sops_file "$key_name" "users" "$public_key"
 	else
 		echo "Age key already exists for ${target_hostname}"

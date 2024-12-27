@@ -487,8 +487,7 @@ in
         ] ++ lib.optional isImpermanent borg-backup-btrfs-subvolume;
         sops.secrets = {
           #FIXME:(borg) make this an optional path
-          #"keys/ssh/borg" = {
-          "ssh_keys/borg" = {
+          "keys/ssh/borg" = {
             # FIXME:(borg) ATM this is required by nix-darwin PR I'm using
             owner = "root";
             group = if pkgs.stdenv.isLinux then "root" else "wheel";

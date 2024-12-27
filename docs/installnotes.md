@@ -700,12 +700,12 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 
     secrets.yaml
     -------
-    ssh_keys:
-        maya: <private key data>
-        mara: <private key data>
-        manu: <private key data>
-    yubico:
-        u2f_keys: <key data>
+    keys:
+        ssh:
+            maya: <private key data>
+            mara: <private key data>
+            manu: <private key data>
+        u2f: <key data>
     passwords:
         ta: <password>
         media: <password>
