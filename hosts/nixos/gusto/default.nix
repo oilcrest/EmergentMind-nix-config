@@ -1,7 +1,7 @@
 #############################################################
 #
 #  Gusto - Home Theatre
-#  NixOS running on ASUS VivoPC VM40B-S081M
+#  NixOS running on Intel N95 based mini PC
 #
 ###############################################################
 
@@ -22,7 +22,15 @@
     #
     # ========== Disk Layout ==========
     #
-    #TODO:(gusto) move gusto to disko
+    inputs.disko.nixosModules.disko
+    (lib.custom.relativeToRoot "hosts/common/disks/btrfs-disk.nix")
+    {
+      _module.args = {
+        disk = "/dev/sda";
+        withSwap = true;
+        swapSize = 8;
+      };
+    }
 
     #
     # ========== Misc Inputs ==========
