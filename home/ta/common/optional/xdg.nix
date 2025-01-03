@@ -64,6 +64,12 @@ let
     "application/x-synology-drive-slides" = "synology-drive-open-file.desktop";
 
     #
+    # Drawio
+    #
+    "application/vnd.jgraph.mxfile" = [ "drawio.desktop" ];
+    "application/vnd.jgraph.mxfile.realtime" = [ "drawio.desktop" ];
+
+    #
     # Office Stuff
     #
     "text/csv" = spreadsheet;
