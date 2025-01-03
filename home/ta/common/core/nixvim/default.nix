@@ -146,15 +146,14 @@
            " ================ Vim Wiki config =================
            " See :h vimwiki_list for info on registering wiki paths
            let wiki_0 = {}
-           let wiki_0.path = '~/src/dotfiles.wiki/'
+           let wiki_0.path = '~/sync/obsidian-vault-01/wiki/'
            let wiki_0.index = '0_home'
            let wiki_0.syntax = 'markdown'
            let wiki_0.ext = '.md'
 
            " fill spaces in page names with _ in pathing
-       let wiki_0.links_space_char = '_'
+           let wiki_0.links_space_char = '_'
 
-           " TODO:(nixvim) CONFIRM THESE PATHS FOR NIXOS
            let wiki_1 = {}
            let wiki_1.path = '~/doc/foundry/thefoundry.wiki/'
            let wiki_1.index = 'home'
