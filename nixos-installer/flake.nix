@@ -26,10 +26,7 @@
         (
           let
             diskSpecPath =
-              if useLuks then
-                "../hosts/common/disks/btrfs-luks-disk.nix"
-              else
-                "../hosts/common/disks/btrfs-disk.nix";
+              if useLuks then ../hosts/common/disks/btrfs-luks-disk.nix else ../hosts/common/disks/btrfs-disk.nix;
           in
           nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
@@ -37,6 +34,7 @@
             modules = [
               inputs.disko.nixosModules.disko
               diskSpecPath
+              #              ../hosts/common/disks/btrfs-disk.nix
               {
                 _module.args = {
                   inherit disk withSwap swapSize;
@@ -56,7 +54,7 @@
         # Swap size is in GiB
         grief = newConfig "grief" "/dev/vda" false false "0";
         guppy = newConfig "guppy" "/dev/vda" false false "0";
-        gusto = newConfig "gusto" "/dev/sda" false true "8";
+        gusto = newConfig "gusto" "/dev/nvme0n1" false true "8";
 
         ghost = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";

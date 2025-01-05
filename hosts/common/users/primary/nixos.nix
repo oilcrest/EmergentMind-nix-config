@@ -13,7 +13,7 @@ let
   #FIXME:(sops) sops-nix apparently works with darwin now so can probably move this, and password entries for user and root below to default.nix
   # Decrypt password to /run/secrets-for-users/ so it can be used to create the user
   sopsHashedPasswordFile = lib.optionalString (
-    !config.hostSpec.isMinimal && config.hostSpec.hostName != "iso"
+    !config.hostSpec.isMinimal
   ) config.sops.secrets."passwords/${hostSpec.username}".path;
 in
 {
@@ -22,7 +22,7 @@ in
     home = "/home/${hostSpec.username}";
     isNormalUser = true;
     hashedPasswordFile = sopsHashedPasswordFile; # Blank if sops is not working.
-    #  password = "nixos"; # This gets overridden if sops is working; it is only used on iso/nixos-installer
+    # password = lib.mkForce "nixos"; # This gets overridden if sops is working; it is only used with nixos-installer
 
     extraGroups = lib.flatten [
       "wheel"

@@ -26,7 +26,7 @@
     (lib.custom.relativeToRoot "hosts/common/disks/btrfs-disk.nix")
     {
       _module.args = {
-        disk = "/dev/sda";
+        disk = "/dev/nvme0n1";
         withSwap = true;
         swapSize = 8;
       };

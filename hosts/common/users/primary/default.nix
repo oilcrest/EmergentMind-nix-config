@@ -11,19 +11,13 @@ let
   pubKeys = lib.filesystem.listFilesRecursive ./keys;
 in
 {
-  users.users.${hostSpec.username} =
-    {
-      name = hostSpec.username;
-      shell = pkgs.zsh; # default shell
+  users.users.${hostSpec.username} = {
+    name = hostSpec.username;
+    shell = pkgs.zsh; # default shell
 
-      # These get placed into /etc/ssh/authorized_keys.d/<name> on nixos
-      openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
-    }
-    #FIXME: remove this define in the iso and installer using mkForce
-    // lib.optionalAttrs (hostSpec.isMinimal || hostSpec.hostName == "iso") {
-      # This gets overridden if sops is working, only used on iso/nixos-installer
-      password = "nixos";
-    };
+    # These get placed into /etc/ssh/authorized_keys.d/<name> on nixos
+    openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
+  };
 
   # Create ssh sockets directory for controlpaths when homemanager not loaded (i.e. isMinimal)
   systemd.tmpfiles.rules =

@@ -16,8 +16,9 @@
     inputs.home-manager.nixosModules.home-manager
     (map lib.custom.relativeToRoot [
       "modules/common/host-spec.nix"
+      # We want primary default so we get ssh authorized keys, zsh, and some basic tty tools. It will also pull in hm.
       "hosts/common/users/primary/default.nix"
-      "hosts/common/users/primary/nixos.nix"
+      # This is not needed in iso: "hosts/common/users/primary/nixos.nix"
     ])
   ];
 
@@ -33,6 +34,20 @@
     #TODO: This is stuff for home/ta/common/core/git.nix. should create home/ta/common/optional/development.nix so core git.nix doesn't use it.
     handle = "emergentmind";
     email.gitHub = inputs.nix-secrets.email.gitHub;
+  };
+
+  # Adding this whole set explicitly for the iso so it doesn't barf about sops being non-existent
+  users.users.${config.hostSpec.username} = {
+    isNormalUser = true;
+    password = lib.mkForce "nixos";
+    extraGroups = [ "wheel" ];
+  };
+
+  # root's ssh key are mainly used for remote deployment
+  users.extraUsers.root = {
+    inherit (config.users.users.${config.hostSpec.username}) password;
+    openssh.authorizedKeys.keys =
+      config.users.users.${config.hostSpec.username}.openssh.authorizedKeys.keys;
   };
 
   # The default compression-level is (6) and takes too long on some machines (>30m). 3 takes <2m

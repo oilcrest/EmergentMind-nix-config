@@ -4,18 +4,14 @@
 
 ## Short Term
 
-- get flameshot working, grimshot isn't adequate
-- issue 14
-- /home/ta/.config/mimeapps.list causes a collisions when rebuilding home-manager
+- install gusto on new hardware
+- fix nixos-installer fuckery
+- consider tagging with version numbers that match roadmap
+- look at https://github.com/AshleyYakeley/NixVirt
 
 ### Current roadmap focus items
 
-- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
-- ~~Refactor from configVars to modularized hostSpec~~
-    - add check for useYubikey flag in sops.nix
 - Re-implement modules to make use of options for enablement
-
-- update docs in nix-secrets
 
 #### General workflow improvements
 
@@ -178,7 +174,7 @@ Migrate primary box to NixOS
 
 ##### 5.1 reduce duplication and modularize
 
-- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
+- ~~Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings~~
 - ~~Refactor from configVars to modularized hostSpec~~
 - Re-implement modules to make use of options for enablement
 

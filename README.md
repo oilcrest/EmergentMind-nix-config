@@ -102,14 +102,14 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
       - Currently not using any darwin hosts
   - `nixos` - machine specific configurations for NixOS-based hosts
       - `genoa` - stage 6
-      - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64MB RAM, Radeon RX5600XT
+      - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64GB RAM, Radeon RX5600XT
       - `grief` - Lab - Qemu VM
       - `gooey` - stage x
       - `guppy` - Remote Install Lab - Qemu VM
-      - `gusto` - Theatre - Asus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
-      - `iso` - custom NixOS ISO that incorporates some quality of life configuration for use during installations and recovery
+      - `gusto` - Theatre mini pc - 3.4GHz N95 (4C/4T), 16GB RAM
+      - `iso` - Custom NixOS ISO that incorporates some quality of life configuration for use during installations and recovery
 - `home/<user>` - Home-manager configurations, built automatically during host rebuilds.
-  - `common` - shared home-manager configurations consumed the user's machine specific ones.
+  - `common` - Shared home-manager configurations consumed the user's machine specific ones.
     - `core` - Home-manager configurations present for user across all machines. This is a hard rule! If something isn't core, it is optional.
     - `optional` - Optional home-manager configurations that can be added for specific machines. These can be added by category (e.g. options/media) or individually (e.g. options/media/vlc.nix) as needed.
       The home-manager core and options are defined in host-specific .nix files housed in `home/<user>`.
