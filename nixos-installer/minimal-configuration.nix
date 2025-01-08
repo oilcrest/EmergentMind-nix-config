@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   lib,
   pkgs,
@@ -17,21 +18,6 @@
     isMinimal = lib.mkForce true;
     username = "ta";
   };
-
-  users.users.${config.hostSpec.username}.password = lib.mkForce "nixos";
-  # Adding this whole set explicitly for the iso so it doesn't barf about sops being non-existent
-  #  users.users.${config.hostSpec.username} = {
-  #    isNormalUser = true;
-  #    password = lib.mkForce "nixos";
-  #    extraGroups = [ "wheel" ];
-  #  };
-  #
-  #  # root's ssh key are mainly used for remote deployment
-  #  users.extraUsers.root = {
-  #    inherit (config.users.users.${config.hostSpec.username}) password;
-  #    openssh.authorizedKeys.keys =
-  #      config.users.users.${config.hostSpec.username}.openssh.authorizedKeys.keys;
-  #  };
 
   fileSystems."/boot".options = [ "umask=0077" ]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -69,12 +55,16 @@
 
   environment.systemPackages = builtins.attrValues { inherit (pkgs) wget curl rsync; };
 
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    warn-dirty = false;
+  nix = {
+    registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
+    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      warn-dirty = false;
+    };
   };
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.11";
 }
