@@ -22,7 +22,9 @@ in
     home = "/home/${hostSpec.username}";
     isNormalUser = true;
     hashedPasswordFile = sopsHashedPasswordFile; # Blank if sops is not working.
-    # password = lib.mkForce "nixos"; # This gets overridden if sops is working; it is only used with nixos-installer
+    # These gets overridden if sops is working; only used with nixos-installer. For some reason, password sticking so using hashedPassword instead.
+    hashedPassword = "$y$j9T$Ac.m5IZ6ku/nrqK9K9kBi1$lRHp3Xg4Vk7Ly/VAiv5d839VlwDRNt2w9ACMMKe8kR2";
+    # password = lib.mkForce "nixos";
 
     extraGroups = lib.flatten [
       "wheel"
@@ -45,7 +47,8 @@ in
   users.users.root = {
     shell = pkgs.zsh;
     hashedPasswordFile = config.users.users.${hostSpec.username}.hashedPasswordFile;
-    password = lib.mkForce config.users.users.${hostSpec.username}.password; # This gets overridden if sops is working; it is only used if the hostSpec.hostName == "iso"
+    hashedPassword = config.users.users.${hostSpec.username}.hashedPassword; # This gets overridden if sops is working; it is only used if the hostSpec.hostName == "iso"
+    # password = lib.mkForce config.users.users.${hostSpec.username}.password; # This gets overridden if sops is working; it is only used if the hostSpec.hostName == "iso"
     # root's ssh keys are mainly used for remote deployment.
     openssh.authorizedKeys.keys = config.users.users.${hostSpec.username}.openssh.authorizedKeys.keys;
   };
