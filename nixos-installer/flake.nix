@@ -34,7 +34,6 @@
             modules = [
               inputs.disko.nixosModules.disko
               diskSpecPath
-              #              ../hosts/common/disks/btrfs-disk.nix
               {
                 _module.args = {
                   inherit disk withSwap swapSize;

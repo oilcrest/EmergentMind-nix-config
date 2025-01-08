@@ -156,7 +156,6 @@ function nixos_anywhere() {
 	echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 	# This will fail if we already know the host, but that's fine
 	ssh-keyscan -p "$ssh_port" "$target_destination" 2>/dev/null | grep -v '^#' >>~/.ssh/known_hosts || true
-	#ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
 
 	###
 	# nixos-anywhere installation
@@ -182,7 +181,8 @@ function nixos_anywhere() {
 
 	echo "Updating ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 	ssh-keyscan -p "$ssh_port" "$target_destination" 2>/dev/null | grep -v '^#' >>~/.ssh/known_hosts || true
-	#ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
+
+	$ssh_root_cmd "chown $target_user:users /home/$target_user/.ssh && chmod 700 /home/$target_user/.ssh"
 
 	if [ -n "$persist_dir" ]; then
 		$ssh_root_cmd "cp /etc/machine-id $persist_dir/etc/machine-id || true"
@@ -191,7 +191,6 @@ function nixos_anywhere() {
 	cd -
 }
 
-# args: $1 = key name, $2 = key type, $3 key
 function update_sops_file() {
 	key_name=$1
 	key_type=$2
@@ -247,8 +246,8 @@ function generate_host_age_key() {
 function generate_user_age_key() {
 	echo "First checking if ${target_hostname} age key already exists"
 	secret_file="${git_root}"/../nix-secrets/secrets.yaml
-	if ! sops -d --extract '["keys/age"]' "$secret_file" >/dev/null ||
-		! sops -d --extract "[\"keys/age\"][\"${target_hostname}\"]" "$secret_file" >/dev/null 2>&1; then
+	if ! sops -d --extract '["keys"]["age"]' "$secret_file" >/dev/null ||
+		! sops -d --extract "[\"keys\"][\"age\"][\"${target_hostname}\"]" "$secret_file" >/dev/null 2>&1; then
 		echo "Age key does not exist. Generating."
 		user_age_key=$(nix shell nixpkgs#age -c "age-keygen")
 		readarray -t entries <<<"$user_age_key"
@@ -256,7 +255,7 @@ function generate_user_age_key() {
 		public_key=$(echo "${entries[1]}" | rg key: | cut -f2 -d: | xargs)
 		key_name="${target_user}_${target_hostname}"
 		# shellcheck disable=SC2116,SC2086
-		sops --set "$(echo '["keys/age"]["'${key_name}'"] "'$secret_key'"')" "$secret_file"
+		sops --set "$(echo '["keys"]["age"]["'${key_name}'"] "'$secret_key'"')" "$secret_file"
 		update_sops_file "$key_name" "users" "$public_key"
 	else
 		echo "Age key already exists for ${target_hostname}"
@@ -309,7 +308,7 @@ if [[ $updated_age_keys == 1 ]]; then
 	nix flake lock --update-input nix-secrets
 fi
 
-if yes_or_no "Add ssh host fingerprints for git{lab,hub}? If this is the first time running this script on $target_hostname, this will be required for the following steps?"; then
+if yes_or_no "Add ssh host fingerprints for git{lab,hub}? If this is the first time running this script on $target_hostname, this will be required for the following steps."; then
 	if [ "$target_user" == "root" ]; then
 		home_path="/root"
 	else
@@ -317,13 +316,11 @@ if yes_or_no "Add ssh host fingerprints for git{lab,hub}? If this is the first t
 	fi
 	green "Adding ssh host fingerprints for git{lab,hub}"
 	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com 2>/dev/null | grep -v '^#' >>$home_path/.ssh/known_hosts"
-	#$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com >>$home_path/.ssh/known_hosts"
 fi
 
 if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $target_hostname?"; then
 	green "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 	ssh-keyscan -p "$ssh_port" "$target_destination" 2>/dev/null | grep -v '^#' >>~/.ssh/known_hosts || true
-	#ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
 	green "Copying full nix-config to $target_hostname"
 	sync "$target_user" "${git_root}"/../nix-config
 	green "Copying full nix-secrets to $target_hostname"
@@ -332,7 +329,7 @@ if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $targe
 	if yes_or_no "Do you want to rebuild immediately?"; then
 		green "Rebuilding nix-config on $target_hostname"
 		#FIXME:(bootstrap) there are still a gitlab fingerprint request happening during the rebuild
-		$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
+		$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --impure --show-trace --flake .#$target_hostname switch"
 		#FIXME:(bootstrap) This fails because `just rebuild` tries to run `nix flake update nix-secrets` but the flake registry doesn't exist yet
 		# $ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
 	fi
@@ -345,7 +342,7 @@ else
 	echo "To rebuild, sign into $target_hostname and run the following command from ~/nix-config"
 	echo "cd nix-config"
 	# see above FIXME:(bootstrap)
-	echo "sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
+	echo "sudo nixos-rebuild --impure --show-trace --flake .#$target_hostname switch"
 	# echo "just rebuild"
 	echo
 fi
