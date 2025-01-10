@@ -4,14 +4,19 @@
 
 ## Short Term
 
-- install gusto on new hardware
-- fix nixos-installer fuckery
 - consider tagging with version numbers that match roadmap
-- look at https://github.com/AshleyYakeley/NixVirt
+- nixVirt - https://github.com/AshleyYakeley/NixVirt
+- ignoreBoy - https://github.com/Ookiiboy/ignoreBoy
 
-### Current roadmap focus items
+### Current roadmap focus items - 5.2
 
-- Re-implement modules to make use of options for enablement
+- Revise nixos-installer and bootstrap script
+- Consider nixifying bash scripts (see refs below)
+- Overhaul just file
+  - clean up
+  - add {{just.executable()}} to just entries
+  - explore direnv
+
 
 #### General workflow improvements
 
@@ -176,10 +181,11 @@ Migrate primary box to NixOS
 
 - ~~Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings~~
 - ~~Refactor from configVars to modularized hostSpec~~
-- Re-implement modules to make use of options for enablement
+- ~~Re-implement modules to make use of options for enablement~~ deferred, nice to have
 
 ##### 5.2 script cleaning
 
+- Revise bootstrap script
 - Consider nixifying bash scripts (see refs below)
 - Overhaul just file
   - clean up
@@ -222,7 +228,7 @@ The following has to happen on bare metal because I can't seem to get the yubike
 
 - automatic scheduled sops rotate
 - Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputting the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
-- move Gusto to disko
+- ~~move Gusto to disko~~~
 - revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
 - disk usage notifier
 
@@ -250,12 +256,13 @@ Migrating bash scripts to nix
 
 Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
 
-- laptop utils
+- nixify genoa
+- add laptop utils
 
 #### 7. Ricing
 
 - gui dev
-  - host specific colours via stylix or nix-colors
+  - host specific colours (terminal in particular) via stylix or nix-colors
   - centralize color palette
 
 - eww as a potential replacement to waybar
@@ -266,13 +273,20 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
 
 - maybe rEFInd
-- greetd
+- greetd - Have considered just auto logging in after luks unlock but if/when wayland or X inevitably shit the bed again, it's convenient to have a stop point after unlock
 - p10k - consider config so that line glyphs don't interfere with yanking
 - fonts - https://old.reddit.com/r/vim/comments/fonzfi/what_is_your_favorite_font_for_coding_in_vim/
 - dunst
 - lualine
 
+Inspirational references:
+- https://old.reddit.com/r/unixporn/comments/1hswkeb/bspwm_my_most_timeconsuming_rice_each_step_is/#lightbox
+- https://old.reddit.com/r/unixporn/comments/1g3stp8/hyprland_i_love_gruvbox_and_hyprland/#lightbox
+- https://github.com/MathisP75/daemon-kde-mk2
+
 #### 8. tbd
+
+- Re-implement modules to make use of options for enablement
 
 ---
 
