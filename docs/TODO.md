@@ -4,9 +4,9 @@
 
 ## Short Term
 
-- consider tagging with version numbers that match roadmap
-- nixVirt - https://github.com/AshleyYakeley/NixVirt
 - ignoreBoy - https://github.com/Ookiiboy/ignoreBoy
+- nix-secrets update
+- consider tagging with version numbers that match roadmap
 
 ### Current roadmap focus items - 5.2
 
