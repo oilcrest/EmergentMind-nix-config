@@ -7,7 +7,7 @@
   ...
 }:
 let
-  secretsDirectory = builtins.toString inputs.nix-secrets;
+  secretsDirectory = builtins.toString inputs.nix-secrets + "/sops";
   secretsFile = "${secretsDirectory}/secrets.yaml";
 in
 {

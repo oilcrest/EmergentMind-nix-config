@@ -29,7 +29,6 @@
 
     # Needed because we don't use host/common/core for iso
     networking = inputs.nix-secrets.networking;
-    domain = inputs.nix-secrets.domain;
 
     #TODO: This is stuff for home/ta/common/core/git.nix. should create home/ta/common/optional/development.nix so core git.nix doesn't use it.
     handle = "emergentmind";

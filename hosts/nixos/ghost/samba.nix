@@ -6,7 +6,7 @@
 
 { pkgs, config, ... }:
 let
-  localPrefix = config.hostSpec.networking.subnets.prefix.lan;
+  localPrefix = config.hostSpec.networking.subnets.grove.triplet;
 in
 {
   networking.firewall = {
@@ -28,7 +28,7 @@ in
         "invalid users" = [ "root" ];
         "workgroup" = "WORKGROUP";
         "security" = "user";
-        "hosts allow" = "${localPrefix} 127.0.0.1 localhost";
+        "hosts allow" = "${localPrefix}. 127.0.0.1 localhost";
         "hosts deny" = "0.0.0.0/0";
         "guest account" = "nobody";
         "map to guest" = "bad user";

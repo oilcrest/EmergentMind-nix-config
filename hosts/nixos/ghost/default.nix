@@ -95,9 +95,9 @@
   services.backup = {
     enable = true;
     borgBackupStartTime = "02:00:00";
-    borgServer = "${config.hostSpec.networking.subnets.oops.ip}";
+    borgServer = "${config.hostSpec.networking.subnets.grove.hosts.oops.ip}";
     borgUser = "${config.hostSpec.username}";
-    borgPort = "${builtins.toString config.hostSpec.networking.subnets.oops.port}";
+    borgPort = "${builtins.toString config.hostSpec.networking.ports.tcp.oops}";
     borgBackupPath = "/var/services/homes/${config.hostSpec.username}/backups";
     borgNotifyFrom = "${config.hostSpec.email.notifier}";
     borgNotifyTo = "${config.hostSpec.email.backup}";
