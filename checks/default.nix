@@ -39,6 +39,12 @@
 
       # ========== nix ==========
       nixfmt-rfc-style.enable = true;
+      deadnix = {
+        enable = true;
+        settings = {
+          noLambdaArg = true;
+        };
+      };
 
       # ========== shellscripts ==========
       shfmt.enable = true;

@@ -25,8 +25,11 @@
 
         nix
         home-manager
+        nh
         git
         just
+        pre-commit
+        deadnix
 
         age
         ssh-to-age
