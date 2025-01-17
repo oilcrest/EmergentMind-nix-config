@@ -41,15 +41,16 @@
       enable = true;
       ports = [ 22 ];
       settings.PermitRootLogin = "yes";
+      authorizedKeysFiles = lib.mkForce [ "/etc/ssh/authorized_keys.d/%u" ];
     };
   };
 
   # allow sudo over ssh with yubikey
   security.pam = {
-    sshAgentAuth.enable = true;
+    rssh.enable = true;
     services.sudo = {
+      rssh = true;
       u2fAuth = true;
-      sshAgentAuth = true;
     };
   };
 

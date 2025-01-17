@@ -151,7 +151,6 @@ in
 
     # yubikey login / sudo
     security.pam = lib.optionalAttrs pkgs.stdenv.isLinux {
-      sshAgentAuth.enable = true;
       u2f = {
         enable = true;
         settings = {
@@ -163,7 +162,6 @@ in
         login.u2fAuth = true;
         sudo = {
           u2fAuth = true;
-          sshAgentAuth = true; # Use SSH_AUTH_SOCK for sudo
         };
         # Attempt to auto-unlock gnome-keyring using u2f
         # NOTE: vscode uses gnome-keyring even if we aren't using gnome, which is why it's still here
