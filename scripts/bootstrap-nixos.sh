@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-
 set -eo pipefail
 
 # User variables
 target_hostname=""
 target_destination=""
-target_user="ta"
-ssh_key=""
-ssh_port="22"
+target_user=${BOOTSTRAP_USER-$(whoami)} # Set BOOTSTRAP_ defaults in your shell.nix
+ssh_port=${BOOTSTRAP_SSH_PORT-22}
+ssh_key=${BOOTSTRAP_SSH_KEY-}
 persist_dir=""
 luks_secondary_drive_labels=""
+
 # Create a temp directory for generated host keys
 temp=$(mktemp -d)
 
@@ -25,12 +25,21 @@ function red() {
 		echo -e "\x1B[31m[!] $($2) \x1B[0m"
 	fi
 }
+
 function green() {
 	echo -e "\x1B[32m[+] $1 \x1B[0m"
 	if [ -n "${2-}" ]; then
 		echo -e "\x1B[32m[+] $($2) \x1B[0m"
 	fi
 }
+
+function blue() {
+	echo -e "\x1B[34m[*] $1 \x1B[0m"
+	if [ -n "${2-}" ]; then
+		echo -e "\x1B[34m[*] $($2) \x1B[0m"
+	fi
+}
+
 function yellow() {
 	echo -e "\x1B[33m[*] $1 \x1B[0m"
 	if [ -n "${2-}" ]; then
@@ -38,8 +47,9 @@ function yellow() {
 	fi
 }
 
+# Ask yes or no, with yes being the default
 function yes_or_no() {
-	echo -en "\x1B[32m[+] $* [y/n] (default: y): \x1B[0m"
+	echo -en "\x1B[34m[?] $* [y/n] (default: y): \x1B[0m"
 	while true; do
 		read -rp "" yn
 		yn=${yn:-y}
@@ -50,11 +60,26 @@ function yes_or_no() {
 	done
 }
 
-function sync() {
-	# $1 = user, $2 = source, $3 = destination
-	rsync -av --filter=':- .gitignore' -e "ssh -l $1 -oport=${ssh_port}" $2 $1@${target_destination}:
+# Ask no or yes, with no being the default
+function no_or_yes() {
+	echo -en "\x1B[34m[?] $* [y/n] (default: n): \x1B[0m"
+	while true; do
+		read -rp "" yn
+		yn=${yn:-n}
+		case $yn in
+		[Yy]*) return 0 ;;
+		[Nn]*) return 1 ;;
+		esac
+	done
 }
 
+# Copy data to the target machine
+function sync() {
+	# $1 = user, $2 = source, $3 = destination
+	rsync -av --filter=':- .gitignore' -e "ssh -l $1 -oport=${ssh_port}" "$2" "$1@${target_destination}:"
+}
+
+# Usage function
 function help_and_exit() {
 	echo
 	echo "Remotely installs NixOS on a target machine using this nix-config."
@@ -63,7 +88,7 @@ function help_and_exit() {
 	echo
 	echo "ARGS:"
 	echo "  -n <target_hostname>                    specify target_hostname of the target host to deploy the nixos config on."
-	echo "  -d <target_destination>                 specify ip or url to the target host."
+	echo "  -d <target_destination>                 specify ip or domain to the target host."
 	echo "  -k <ssh_key>                            specify the full path to the ssh_key you'll use for remote access to the"
 	echo "                                          target during install process."
 	echo "                                          Example: -k /home/${target_user}/.ssh/my_ssh_key"
@@ -119,22 +144,30 @@ while [[ $# -gt 0 ]]; do
 		;;
 	-h | --help) help_and_exit ;;
 	*)
-		echo "Invalid option detected."
+		red "ERROR: Invalid option detected."
 		help_and_exit
 		;;
 	esac
 	shift
 done
 
+if [ -z "$target_hostname" ] || [ -z "$target_destination" ] || [ -z "$ssh_key" ]; then
+	red "ERROR: -n, -d, and -k are all required"
+	echo
+	help_and_exit
+fi
+
 # SSH commands
 ssh_cmd="ssh -oport=${ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $ssh_key -t $target_user@$target_destination"
+# shellcheck disable=SC2001
 ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
 scp_cmd="scp -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
 
 git_root=$(git rev-parse --show-toplevel)
 
+# Setup minimal environment for nixos-anywhere and run it
 function nixos_anywhere() {
-	# Clear the keys, since they should be newly generated for the iso
+	# Clear the known keys, since they should be newly generated for the iso
 	green "Wiping known_hosts of $target_destination"
 	sed -i "/$target_hostname/d; /$target_destination/d" ~/.ssh/known_hosts
 
@@ -148,12 +181,12 @@ function nixos_anywhere() {
 	install -d -m755 "$temp/$persist_dir/etc/ssh"
 
 	# Generate host ssh key pair without a passphrase
-	ssh-keygen -t ed25519 -f "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key" -C root@"$target_hostname" -N ""
+	ssh-keygen -t ed25519 -f "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key" -C "$target_user"@"$target_hostname" -N ""
 
 	# Set the correct permissions so sshd will accept the key
 	chmod 600 "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key"
 
-	echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
+	green "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 	# This will fail if we already know the host, but that's fine
 	ssh-keyscan -p "$ssh_port" "$target_destination" 2>/dev/null | grep -v '^#' >>~/.ssh/known_hosts || true
 
@@ -161,25 +194,32 @@ function nixos_anywhere() {
 	# nixos-anywhere installation
 	###
 	cd nixos-installer
-
 	# when using luks, disko expects a passphrase on /tmp/disko-password, so we set it for now and will update the passphrase later
-	# via the config
-	green "Preparing a temporary password for disko."
-	green "[Optional] Set disk encryption passphrase or press enter to skip:"
-	read -s luks_passphrase
-	if [ -n "$luks_passphrase" ]; then
-		$ssh_root_cmd "/bin/sh -c 'echo \'$luks_passphrase\' > /tmp/disko-password'"
+	temp_luks_passphrase="passphrase"
+	if no_or_yes "Manually set luks encryption passphrase? (Default: \"$temp_luks_passphrase\")"; then
+		blue "Enter your luks encryption passphrase:"
+		read -rs luks_passphrase
+		$ssh_root_cmd "/bin/sh -c 'echo $luks_passphrase > /tmp/disko-password'"
 	else
-		$ssh_root_cmd "/bin/sh -c 'echo passphrase > /tmp/disko-password'"
+		green "Using '$temp_luks_passphrase' as the luks encryption passphrase. Change after installation."
+		$ssh_root_cmd "/bin/sh -c 'echo $temp_luks_passphrase > /tmp/disko-password'"
 	fi
-	green "Generating hardware-config.nix for $target_hostname and adding it to the nix-config."
-	$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
-	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/nixos/"$target_hostname"/hardware-configuration.nix
+
+	# If you are rebuilding a machine without any hardware changes, this is likely unneeded or even possibly disruptive
+	if yes_or_no "Generate a new hardware config for this host?"; then
+		green "Generating hardware-configuration.nix on $target_hostname and adding it to the local nix-config."
+		$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
+		$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/nixos/"$target_hostname"/hardware-configuration.nix
+	fi
 
 	# --extra-files here picks up the ssh host key we generated earlier and puts it onto the target machine
-	SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --ssh-port "$ssh_port" --extra-files "$temp" --flake .#"$target_hostname" root@"$target_destination"
+	SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --ssh-port "$ssh_port" --post-kexec-ssh-port "$ssh_port" --extra-files "$temp" --flake .#"$target_hostname" root@"$target_destination"
 
-	echo "Updating ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
+	if ! yes_or_no "Has your system restarted and are you ready to continue? (no exits)"; then
+		exit 0
+	fi
+
+	green "Adding $target_destination's ssh host fingerprint to ~/.ssh/known_hosts"
 	ssh-keyscan -p "$ssh_port" "$target_destination" 2>/dev/null | grep -v '^#' >>~/.ssh/known_hosts || true
 
 	$ssh_root_cmd "chown $target_user:users /home/$target_user/.ssh && chmod 700 /home/$target_user/.ssh"
@@ -191,6 +231,11 @@ function nixos_anywhere() {
 	cd -
 }
 
+# Updates the .sops.yaml file with a new host or user age key.
+# Assumptions:
+# - a secrets folder containing .sops.yaml is located at ../nix-secrets from the git root
+# - per-host .yaml secret files
+# args: $1 = key name, $2 = key type, $3 key
 function update_sops_file() {
 	key_name=$1
 	key_type=$2
@@ -204,11 +249,8 @@ function update_sops_file() {
 
 	SOPS_FILE=".sops.yaml"
 	sed -i "{
-	# Remove any * and & entries for this host
-	/[*&]$key_name/ d;
-	# Inject a new age: entry
-	# n matches the first line following age: and p prints it, then we transform it while reusing the spacing
-	/age:/{n; p; s/\(.*- \*\).*/\1$key_name/};
+	# Remove any & entries for this host
+	/&$key_name/ d;
 	# Inject a new hosts or user: entry
 	/&$key_type:/{n; p; s/\(.*- &\).*/\1$key_name $key/}
 	}" $SOPS_FILE
@@ -217,17 +259,14 @@ function update_sops_file() {
 }
 
 function generate_host_age_key() {
-	green "Generating an age key based on the new ssh_host_ed25519_key."
+	green "Generating an age key based on the new ssh_host_ed25519_key"
 
-	target_key=$(
-		ssh-keyscan -p "$ssh_port" -t ssh-ed25519 "$target_destination" 2>&1 |
-			grep ssh-ed25519 |
-			cut -f2- -d" " ||
-			(
-				red "Failed to get ssh key. Host down?"
-				exit 1
-			)
-	)
+	# Get the SSH key
+	target_key=$(ssh-keyscan -p "$ssh_port" -t ssh-ed25519 "$target_destination" 2>&1 | grep ssh-ed25519 | cut -f2- -d" ") || {
+		red "Failed to get ssh key. Host down or maybe SSH port now changed?"
+		exit 1
+	}
+
 	host_age_key=$(nix shell nixpkgs#ssh-to-age.out -c sh -c "echo $target_key | ssh-to-age")
 
 	if grep -qv '^age1' <<<"$host_age_key"; then
@@ -243,12 +282,23 @@ function generate_host_age_key() {
 	update_sops_file "$target_hostname" "hosts" "$host_age_key"
 }
 
+# FIXME: This will need to be adjusted because we now have multiple secret files.
+# We may have to associate the key with the <hostname>.yaml as well
 function generate_user_age_key() {
-	echo "First checking if ${target_hostname} age key already exists"
+	green "First checking if ${target_hostname} age key already exists"
+
+	# FIXME:(starter-repo) remove old secrets.yaml line once starter repo is completed
 	secret_file="${git_root}"/../nix-secrets/secrets.yaml
-	if ! sops -d --extract '["keys"]["age"]' "$secret_file" >/dev/null ||
+	#	secret_file="${git_root}"/../nix-secrets/sops/${target_hostname}.yaml
+
+	if [ ! -f "$secret_file" ]; then
+		red "Secret file does not exist. Exiting."
+		exit 1
+	fi
+
+	if ! sops -d --extract '["keys]["age"]' "$secret_file" >/dev/null ||
 		! sops -d --extract "[\"keys\"][\"age\"][\"${target_hostname}\"]" "$secret_file" >/dev/null 2>&1; then
-		echo "Age key does not exist. Generating."
+		green "Age key does not exist. Generating."
 		user_age_key=$(nix shell nixpkgs#age -c "age-keygen")
 		readarray -t entries <<<"$user_age_key"
 		secret_key=${entries[2]}
@@ -258,16 +308,16 @@ function generate_user_age_key() {
 		sops --set "$(echo '["keys"]["age"]["'${key_name}'"] "'$secret_key'"')" "$secret_file"
 		update_sops_file "$key_name" "users" "$public_key"
 	else
-		echo "Age key already exists for ${target_hostname}"
+		green "Age key already exists for ${target_hostname}"
 	fi
 }
 
 function setup_luks_secondary_drive_decryption() {
-	echo "Generating /luks-secondary-unlock.key"
+	green "Generating /luks-secondary-unlock.key"
 	local key=${persist_dir}/luks-secondary-unlock.key
 	$ssh_root_cmd "/bin/sh -c 'dd bs=512 count=4 if=/dev/random of=$key iflag=fullblock && chmod 400 $key'"
 
-	echo "Cryptsetup luksAddKey will now be used to add /luks-secondary-unlock.key for the specified secondary drive names."
+	green "Cryptsetup luksAddKey will now be used to add /luks-secondary-unlock.key for the specified secondary drive names."
 	readarray -td, drivenames <<<"$luks_secondary_drive_labels"
 	for name in "${drivenames[@]}"; do
 		device_path=$($ssh_root_cmd -q "/bin/sh -c 'cryptsetup status \"$name\" | awk \'/device:/ {print \$2}\''")
@@ -287,10 +337,6 @@ if yes_or_no "Run nixos-anywhere installation?"; then
 	nixos_anywhere
 fi
 
-if [ -n "$luks_secondary_drive_labels" ]; then
-	setup_luks_secondary_drive_decryption
-fi
-
 if yes_or_no "Generate host (ssh-based) age key?"; then
 	generate_host_age_key
 	updated_age_keys=1
@@ -305,10 +351,11 @@ if [[ $updated_age_keys == 1 ]]; then
 	# Since we may update the sops.yaml file twice above, only rekey once at the end
 	just rekey
 	green "Updating flake input to pick up new .sops.yaml"
-	nix flake lock --update-input nix-secrets
+	nix flake update nix-secrets
 fi
 
-if yes_or_no "Add ssh host fingerprints for git{lab,hub}? If this is the first time running this script on $target_hostname, this will be required for the following steps."; then
+green "NOTE: If this is the first time running this script on $target_hostname, the next step is required to continue"
+if yes_or_no "Add ssh host fingerprints for git{lab,hub}?"; then
 	if [ "$target_user" == "root" ]; then
 		home_path="/root"
 	else
@@ -326,33 +373,31 @@ if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $targe
 	green "Copying full nix-secrets to $target_hostname"
 	sync "$target_user" "${git_root}"/../nix-secrets
 
-	if yes_or_no "Do you want to rebuild immediately?"; then
+	# FIXME: Add some sort of key access from the target to download the config (if it's a cloud system)
+	if yes_or_no "Do you want to rebuild immediately? (requires yubikey-agent)"; then
 		green "Rebuilding nix-config on $target_hostname"
-		#FIXME:(bootstrap) there are still a gitlab fingerprint request happening during the rebuild
 		$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --impure --show-trace --flake .#$target_hostname switch"
 		#FIXME:(bootstrap) This fails because `just rebuild` tries to run `nix flake update nix-secrets` but the flake registry doesn't exist yet
-		# $ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
+		#$ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
 	fi
 else
 	echo
 	green "NixOS was successfully installed!"
 	echo "Post-install config build instructions:"
-	echo "To copy nix-config from this machine to the $target_hostname, run the following command from ~/nix-config"
+	echo "To copy nix-config from this machine to the $target_hostname, run the following command"
 	echo "just sync $target_user $target_destination"
-	echo "To rebuild, sign into $target_hostname and run the following command from ~/nix-config"
+	echo "To rebuild, sign into $target_hostname and run the following command"
 	echo "cd nix-config"
-	# see above FIXME:(bootstrap)
-	echo "sudo nixos-rebuild --impure --show-trace --flake .#$target_hostname switch"
+	# FIXME:(bootstrap) see above FIXME
+	echo "sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
 	# echo "just rebuild"
 	echo
 fi
 
-if yes_or_no "You can now commit and push the nix-config, which includes the hardware-configuration.nix for $target_hostname?"; then
+if yes_or_no "Do you want to commit and push the nix-config, which includes the hardware-configuration.nix for $target_hostname?"; then
 	(pre-commit run --all-files 2>/dev/null || true) &&
 		git add "$git_root/hosts/$target_hostname/hardware-configuration.nix" && (git commit -m "feat: hardware-configuration.nix for $target_hostname" || true) && git push
 fi
-
-#TODO prune all previous generations?
 
 green "Success!"
 green "If you are using a disko config with luks partitions, update luks to use non-temporary credentials."
