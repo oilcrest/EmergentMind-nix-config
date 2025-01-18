@@ -10,7 +10,6 @@ let
   hostSpec = config.hostSpec;
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 
-  #FIXME:(sops) sops-nix apparently works with darwin now so can probably move this, and password entries for user and root below to default.nix
   # Decrypt password to /run/secrets-for-users/ so it can be used to create the user
   sopsHashedPasswordFile = lib.optionalString (
     !config.hostSpec.isMinimal
@@ -22,9 +21,6 @@ in
     home = "/home/${hostSpec.username}";
     isNormalUser = true;
     hashedPasswordFile = sopsHashedPasswordFile; # Blank if sops is not working.
-    # These gets overridden if sops is working; only used with nixos-installer. For some reason, password sticking so using hashedPassword instead.
-    hashedPassword = "$y$j9T$Ac.m5IZ6ku/nrqK9K9kBi1$lRHp3Xg4Vk7Ly/VAiv5d839VlwDRNt2w9ACMMKe8kR2";
-    # password = lib.mkForce "nixos";
 
     extraGroups = lib.flatten [
       "wheel"
@@ -47,10 +43,8 @@ in
   users.users.root = {
     shell = pkgs.zsh;
     hashedPasswordFile = config.users.users.${hostSpec.username}.hashedPasswordFile;
-    hashedPassword = config.users.users.${hostSpec.username}.hashedPassword; # This gets overridden if sops is working; it is only used if the hostSpec.hostName == "iso"
-    # password = lib.mkForce config.users.users.${hostSpec.username}.password; # This gets overridden if sops is working; it is only used if the hostSpec.hostName == "iso"
-    # root's ssh keys are mainly used for remote deployment.
-    openssh.authorizedKeys.keys = config.users.users.${hostSpec.username}.openssh.authorizedKeys.keys;
+    hashedPassword = config.users.users.${hostSpec.username}.hashedPassword; # This comes from hosts/common/optional/minimal.nix and gets overridden if sops is working
+    openssh.authorizedKeys.keys = config.users.users.${hostSpec.username}.openssh.authorizedKeys.keys; # root's ssh keys are mainly used for remote deployment.
   };
 }
 // lib.optionalAttrs (inputs ? "home-manager") {
