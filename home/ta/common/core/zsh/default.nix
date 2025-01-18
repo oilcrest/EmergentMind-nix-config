@@ -4,6 +4,10 @@
   lib,
   ...
 }:
+let
+  devDirectory = "~/src";
+  devNix = "${devDirectory}/nix";
+in
 {
   programs.zsh = {
     enable = true;
@@ -97,7 +101,7 @@
       # For a full list of active aliases, run `alias`.
 
       #-------------Bat related------------
-      cat = "bat";
+      cat = "bat --paging=never";
       diff = "batdiff";
       rg = "batgrep";
       man = "batman";
@@ -118,19 +122,32 @@
       ls = "eza";
       lsa = "eza -lah";
 
-      #-------------Neovim---------------
-      e = "nvim";
-      vi = "nvim";
-      vim = "nvim";
+      #------------Nix src navigation------------
+      cnc = "cd ${devNix}/nix-config";
+      cns = "cd ${devNix}/nix-secrets";
+      cnh = "cd ${devNix}/nixos-hardware";
+      cnp = "cd ${devNix}/nixpkgs";
 
-      #-----------Nix related----------------
+      #-----------Nix commands----------------
       nfc = "nix flake check";
       ne = "nix instantiate --eval";
       nb = "nix build";
       ns = "nix shell";
 
+      #-------------justfiles---------------
+      jr = "just rebuild";
+      jrt = "just rebuild-trace";
+      jl = "just --list";
+      jc = "$just check";
+      jct = "$just check-trace";
+
+      #-------------Neovim---------------
+      e = "nvim";
+      vi = "nvim";
+      vim = "nvim";
+
       #-------------Git Goodness-------------
-      # just reference `$ alias` and use the defautls, they're good.
+      # just reference `$ alias` and use the defaults, they're good.
     };
   };
 }
