@@ -1,6 +1,4 @@
 {
-  inputs,
-  config,
   lib,
   pkgs,
   ...
@@ -11,11 +9,13 @@
       "modules/common/host-spec.nix"
       "hosts/common/users/primary"
       "hosts/common/users/primary/nixos.nix"
+      "hosts/common/optional/minimal-user.nix"
     ])
   ];
 
   hostSpec = {
     isMinimal = lib.mkForce true;
+    hostName = "installer";
     username = "ta";
   };
 
@@ -28,10 +28,38 @@
     # pick the highest resolution for systemd-boot's console.
     consoleMode = lib.mkDefault "max";
   };
-  boot.initrd.systemd.enable = true;
+  boot.initrd = {
+    systemd.enable = true;
+    systemd.emergencyAccess = true; # Don't need to enter password in emergency mode
+    luks.forceLuksSupportInInitrd = true;
+  };
+  boot.kernelParams = [
+    "systemd.setenv=SYSTEMD_SULOGIN_FORCE=1"
+    "systemd.show_status=true"
+    #"systemd.log_level=debug"
+    "systemd.log_target=console"
+    "systemd.journald.forward_to_console=1"
+  ];
+
+  # allow sudo over ssh with yubikey
+  security.pam = {
+    rssh.enable = true;
+    services.sudo = {
+      rssh = true;
+      u2fAuth = true;
+    };
+  };
+
+  environment.systemPackages = builtins.attrValues {
+    inherit (pkgs)
+      wget
+      curl
+      rsync
+      git
+      ;
+  };
 
   networking = {
-    # configures the network interface(include wireless) via `nmcli` & `nmtui`
     networkmanager.enable = true;
   };
 
@@ -45,20 +73,7 @@
     };
   };
 
-  # allow sudo over ssh with yubikey
-  security.pam = {
-    rssh.enable = true;
-    services.sudo = {
-      rssh = true;
-      u2fAuth = true;
-    };
-  };
-
-  environment.systemPackages = builtins.attrValues { inherit (pkgs) wget curl rsync; };
-
   nix = {
-    registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
-    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
     settings = {
       experimental-features = [
         "nix-command"
