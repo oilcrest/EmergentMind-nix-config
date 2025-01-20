@@ -137,7 +137,7 @@ in
         btop # resource monitor
         copyq # clipboard manager
         coreutils # basic gnu utils
-        # curl
+        curl
         eza # ls replacement
         dust # disk usage
         fd # tree style ls
