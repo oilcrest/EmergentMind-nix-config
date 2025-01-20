@@ -65,6 +65,7 @@
 
   hostSpec = {
     hostName = "gusto";
+    useYubikey = lib.mkForce true;
   };
 
   # Enable some basic X server options
