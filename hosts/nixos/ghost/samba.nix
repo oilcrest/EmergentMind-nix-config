@@ -1,4 +1,4 @@
-#FIXME:(structure) this needs a proper home but not sure where yet
+#FIXME(structure): this needs a proper home but not sure where yet
 
 # Once this service is started for the first time
 # add any required users and passwords

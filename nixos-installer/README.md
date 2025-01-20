@@ -1,4 +1,4 @@
-#FIXME:(docs) this needs cleanup and correction to a few things
+#FIXME(docs): this needs cleanup and correction to a few things
 
 # Nix Environment Setup for an existing host
 
@@ -35,7 +35,7 @@ The configuration of the main flake, [/flake.nix](/flake.nix), is heavy, and it 
 - Find disk name from livecd with `lsblk`
 - Find RAM amount form livcde with `free -m`
 - Add `nixos-installer/flake.nix` entry, and pass disk name and swap
-- Add an age key to keys/age entry in nix-secrets (FIXME:(docs) This can be automated)
+- Add an age key to keys/age entry in nix-secrets (# FIXME(docs): This can be automated)
 - If you'll be using backup, add a borg passphrase to nix-secrets
 
 ## Steps to Deploying this flake

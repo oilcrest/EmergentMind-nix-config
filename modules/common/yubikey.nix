@@ -24,7 +24,7 @@ let
         serial=$(ykman list | awk '{print $NF}')
         # If it got unplugged before we ran, just don't bother
         if [ -z "$serial" ]; then
-          # FIXME:(yubikey) Warn probably
+          # FIXME(yubikey): Warn probably
           exit 0
         fi
 
@@ -112,7 +112,7 @@ in
 
       # Lock the device if you remove the yubikey (use udevadm monitor -p to debug)
       # #ENV{ID_MODEL_ID}=="0407", # This doesn't match all the newer keys
-      # FIXME:(yubikey) We only want this to happen if we're undocked, so we need to see how that works. We probably need to run a
+      # FIXME(yubikey): We only want this to happen if we're undocked, so we need to see how that works. We probably need to run a
       # script that does smarter checks
       # ACTION=="remove",\
       #  ENV{ID_BUS}=="usb",\
@@ -133,7 +133,7 @@ in
       #  ENV{HID_NAME}=="Yubico YubiKey FIDO",\
       #  RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
 
-      # FIXME:(yubikey) Change this so it only wakes up the screen to the login screen, xset cmd doesn't work
+      # FIXME(yubikey): Change this so it only wakes up the screen to the login screen, xset cmd doesn't work
       # SUBSYSTEM=="hid",\
       #  ACTION=="add",\
       #  ENV{HID_NAME}=="Yubico YubiKey FIDO",\

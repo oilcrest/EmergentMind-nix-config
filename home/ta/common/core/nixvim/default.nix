@@ -6,7 +6,6 @@
 {
   inputs,
   pkgs,
-  lib,
   ...
 }:
 {
@@ -108,12 +107,12 @@
     };
 
     # Load Plugins that aren't provided as modules by nixvim
-    # TODO:(nixvim) need to confirm these aren't in nixvim
+    # TODO(vim): need to confirm these aren't in nixvim
     extraPlugins = builtins.attrValues {
       inherit (pkgs.vimPlugins)
         # linting and fixing (config in extraConfigVim below)
         #   https://github.com/dense-analysis/ale
-        #   TODO:(nixvim) revamp setup to lua
+        #   TODO(vim): revamp setup to lua
         #   there is also a lightline-ale  plugin/extension for lightline when you get around to it
         #   by default ALE completion is disabled. need to determine if it's worth enabling and ditching youcompleteme ... it likely is for simplicity!
         ale
@@ -126,7 +125,7 @@
         vimwiki # Vim Wiki
         YouCompleteMe # Code completion engine
 
-        # TODO:(nixvim) make sure this is working and not conflicting with YCM
+        # TODO(vim): make sure this is working and not conflicting with YCM
         # supertab # Use <tab> for insert completion needs - https://github.com/ervandew/supertab/
 
         # Keep vim-devicons as last entry

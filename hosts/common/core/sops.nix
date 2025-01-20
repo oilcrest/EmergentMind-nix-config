@@ -7,7 +7,7 @@
   ...
 }:
 let
-  # FIXME:(starter-repo)
+  # FIXME(starter-repo):
   #  sopsFolder = builtins.toString inputs.nix-secrets;
   #  secretsFile = "${sopsFolder}/secrets.yaml";
   sopsFolder = builtins.toString inputs.nix-secrets + "/sops";
@@ -37,7 +37,7 @@ in
     # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived
     # from an ssh key).
 
-    # FIXME:(starter-repo)
+    # FIXME(starter-repo):
     #    "keys/age/${config.hostSpec.username}_${config.networking.hostName}" = {
     "keys/age" = {
       owner = config.users.users.${config.hostSpec.username}.name;
@@ -62,7 +62,7 @@ in
   };
   # The containing folders are created as root and if this is the first ~/.config/ entry,
   # the ownership is busted and home-manager can't target because it can't write into .config...
-  # FIXME:(sops) We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
+  # FIXME(sops): We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
   system.activationScripts.sopsSetAgeKeyOwnership =
     let
       ageFolder = "${config.hostSpec.home}/.config/sops/age";

@@ -89,7 +89,7 @@
     enableIPv6 = false;
   };
 
-  #FIXME:(clamav) something not working. disabled to reduce log spam
+  #FIXME(clamav): something not working. disabled to reduce log spam
   semi-active-av.enable = false;
 
   services.backup = {
@@ -125,7 +125,7 @@
     cryptvms UUID=ce5f47f8-d5df-4c96-b2a8-766384780a91 /luks-secondary-unlock.key
   '';
 
-  #TODO:(stylix) move this stuff to separate file but define theme itself per host
+  #TODO(stylix): move this stuff to separate file but define theme itself per host
   # host-wide styling
   stylix = {
     enable = true;
