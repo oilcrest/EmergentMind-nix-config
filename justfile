@@ -1,3 +1,4 @@
+#SOPS_FILE := "../nix-secrets/.sops.yaml"
 SOPS_FILE := "../nix-secrets/secrets.yaml"
 
 # default recipe to display help information
@@ -5,10 +6,13 @@ default:
   @just --list
 
 rebuild-pre: update-nix-secrets
-  git add *.nix
+  nix flake update nixvim-flake --timeout 5
+  @git add --intent-to-add .
 
 rebuild-post:
   just check-sops
+
+build: rebuild
 
 check:
   nix flake check --impure --keep-going
@@ -18,7 +22,7 @@ check-trace:
   nix flake check --impure --show-trace
   cd nixos-installer && nix flake check --impure --show-trace
 
-# Add --option eval-cache false if you end up caching a failure you can't get around
+# NOTE: Add --option eval-cache false if you end up caching a failure you can't get around
 rebuild: rebuild-pre
   scripts/system-flake-rebuild.sh
 
@@ -33,14 +37,10 @@ rebuild-trace: rebuild-pre && rebuild-post
 update:
   nix flake update
 
-rebuild-update: update && rebuild
+rebuild-update: update rebuild
 
 diff:
   git diff ':!flake.lock'
-
-sops:
-  echo "Editing {{SOPS_FILE}}"
-  nix-shell -p sops --run "SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops {{SOPS_FILE}}"
 
 age-key:
   nix-shell -p age --run "age-keygen"
@@ -52,8 +52,8 @@ check-sops:
   scripts/check-sops.sh
 
 update-nix-secrets:
-  (cd ../nix-secrets && git fetch && git rebase) || true
-  nix flake update nix-secrets
+  @(cd ~/src/nix/nix-secrets && git fetch && git rebase > /dev/null) || true
+  nix flake update nix-secrets --timeout 5
 
 iso:
   # If we dont remove this folder, libvirtd VM doesnt run with the new iso...
