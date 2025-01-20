@@ -77,3 +77,56 @@ sync USER HOST:
 
 sync-secrets USER HOST:
   rsync -av --filter=':- .gitignore' -e "ssh -l {{USER}}" . {{USER}}@{{HOST}}:nix-secrets/
+
+
+#
+# ========== Nix-Secrets manipulation recipes ==========
+#
+
+# Update an age key anchor or add a new one
+update-age-key FIELD KEYNAME KEY:
+    # NOTE: Due to quirks this is purposefully not using a single yq expression
+    if [[ -n "$(yq '(.keys.{{FIELD}}[] | select(anchor == "{{KEYNAME}}"))' {{SOPS_FILE}})" ]]; then \
+        echo "Updating existing key" && \
+        yq -i '(.keys.{{FIELD}}[] | select(anchor == "{{KEYNAME}}")) = "{{KEY}}"' {{SOPS_FILE}}; \
+    else \
+        echo "Adding new key" && \
+        yq -i '.keys.{{FIELD}} += ["{{KEY}}"] | .keys.{{FIELD}}[-1] anchor = "{{KEYNAME}}"' {{SOPS_FILE}}; \
+    fi
+
+# Update an existing user age key anchor or add a new one
+update-user-age-key USER HOST KEY:
+  just update-age-key users {{USER}}_{{HOST}} {{KEY}}
+
+# Update an existing host age key anchor or add a new one
+update-host-age-key HOST KEY:
+  just update-age-key hosts {{HOST}} {{KEY}}
+
+# Automatically create a host.yaml file for host-specific secrets
+add-host-sops-file USER HOST:
+    if [[ -z "$(yq '.creation_rules[] | select(.path_regex | contains("{{HOST}}\\.yaml"))' {{SOPS_FILE}})" ]]; then \
+        echo "Adding new host file creation rule" && \
+        yq -i '.creation_rules += {"path_regex": "{{HOST}}\.yaml$", "key_groups": [{"age": ["{{USER}}_{{HOST}}", "{{HOST}}"]}]}' {{SOPS_FILE}} && \
+        yq -i '(.creation_rules[] | select(.path_regex == "{{HOST}}\.yaml$")).key_groups[].age[0] alias = "{{USER}}_{{HOST}}"' {{SOPS_FILE}} && \
+        yq -i '(.creation_rules[] | select(.path_regex == "{{HOST}}\.yaml$")).key_groups[].age[1] alias = "{{HOST}}"' {{SOPS_FILE}}; \
+    fi
+
+# Automatically add the host and user keys to the shared.yaml creation rule
+add-to-shared USER HOST:
+    if [[ -n "$(yq '.creation_rules[] | select(.path_regex == "shared\\.yaml$")' {{SOPS_FILE}})" ]]; then \
+        if [[ -z "$(yq '.creation_rules[] | select(.path_regex == "shared\\.yaml$").key_groups[].age[] | select(alias == "{{HOST}}")' {{SOPS_FILE}})" ]]; then \
+            echo "Adding {{USER}}_{{HOST}} and {{HOST}} to shared.yaml rule" && \
+            yq -i '(.creation_rules[] | select(.path_regex == "shared\\.yaml$")).key_groups[].age += ["{{USER}}_{{HOST}}", "{{HOST}}"]' {{SOPS_FILE}} && \
+            yq -i '(.creation_rules[] | select(.path_regex == "shared\\.yaml$")).key_groups[].age[-2] alias = "{{USER}}_{{HOST}}"' {{SOPS_FILE}} && \
+            yq -i '(.creation_rules[] | select(.path_regex == "shared\\.yaml$")).key_groups[].age[-1] alias = "{{HOST}}"' {{SOPS_FILE}}; \
+        else \
+            echo "Keys already exist in shared.yaml rule"; \
+        fi; \
+    else \
+        echo "shared.yaml rule not found"; \
+    fi
+
+# Automatically add the host and user keys to creation rules for shared.yaml and <host>.yaml
+add-creation-rules USER HOST:
+    just add-host-sops-file {{USER}} {{HOST}} && \
+    just add-to-shared {{USER}} {{HOST}}
