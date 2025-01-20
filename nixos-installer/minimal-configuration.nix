@@ -1,4 +1,6 @@
 {
+  inputs,
+  config,
   lib,
   pkgs,
   ...
@@ -74,6 +76,10 @@
   };
 
   nix = {
+    #FIXME(installer): registry and nixPath shouldn't be required here because flakes but removal results in warning spam on build
+    registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
+    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
+
     settings = {
       experimental-features = [
         "nix-command"
@@ -82,5 +88,6 @@
       warn-dirty = false;
     };
   };
+
   system.stateVersion = "24.11";
 }
