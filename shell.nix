@@ -33,6 +33,7 @@
         just
         pre-commit
         deadnix
+        yq-go
 
         age
         ssh-to-age
