@@ -6,7 +6,7 @@
   ...
 }:
 let
-  secretsDirectory = builtins.toString inputs.nix-secrets + "/sops";
+  secretsDirectory = builtins.toString inputs.nix-secrets;
   secretsFilePath = "${secretsDirectory}/secrets.yaml";
   homeDirectory = config.home.homeDirectory;
   yubikeys = [
