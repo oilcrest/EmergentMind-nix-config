@@ -1,12 +1,10 @@
-#SOPS_FILE := "../nix-secrets/.sops.yaml"
-SOPS_FILE := "../nix-secrets/secrets.yaml"
+SOPS_FILE := "../nix-secrets/.sops.yaml"
 
 # default recipe to display help information
 default:
   @just --list
 
 rebuild-pre: update-nix-secrets
-  nix flake update nixvim-flake --timeout 5
   @git add --intent-to-add .
 
 rebuild-post:

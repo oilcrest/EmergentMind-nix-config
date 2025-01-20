@@ -6,8 +6,10 @@
   ...
 }:
 let
-  secretsDirectory = builtins.toString inputs.nix-secrets;
-  secretsFilePath = "${secretsDirectory}/secrets.yaml";
+  # FIXME: (starter-repo)
+  #  sopsFolder = builtins.toString inputs.nix-secrets;
+  #  secretsFilePath = "${sopsFolder}/secrets.yaml";
+  sopsFolder = (builtins.toString inputs.nix-secrets) + "/sops";
   homeDirectory = config.home.homeDirectory;
   yubikeys = [
     "maya"
@@ -26,7 +28,9 @@ let
     // lib.attrsets.mergeAttrsList (
       lib.lists.map (name: {
         "keys/ssh/${name}" = {
-          sopsFile = "${secretsFilePath}";
+          # FIXME: (starter-repo)
+          # sopsFile = "${secretsFilePath}";
+          sopsFile = "${sopsFolder}/shared.yaml";
           path = "${homeDirectory}/.ssh/id_${name}";
         };
       }) yubikeys
@@ -38,12 +42,11 @@ in
     # This is the location of the host specific age-key for ta and will to have been extracted to this location via hosts/common/core/sops.nix on the host
     age.keyFile = "${homeDirectory}/.config/sops/age/keys.txt";
 
-    defaultSopsFile = "${secretsFilePath}";
+    # FIXME: (starter-repo)
+    #defaultSopsFile = "${secretsFilePath}";
+    defaultSopsFile = "${sopsFolder}/${config.hostSpec.hostName}.yaml";
     validateSopsFiles = false;
 
-    # Linux: Exists in $XDG_RUNTIME_DIR/id_foo
-    # Darwin: Exists in $(getconf DARWIN_USER_TEMP_DIR)
-    #   ex: /var/folders/pp/t8_sr4ln0qv5879cp3trt1b00000gn/T/id_foo
     secrets = {
       #placeholder for tokens that I haven't gotten to yet
       #"tokens/foo" = {
