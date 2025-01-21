@@ -4,8 +4,7 @@
 
 ## Short Term
 
-- add services.per-network-services entries for hosts
-- revise git.nix
+- complete firewall and services.per-network-services branch when genoa is nixified
 
 - consider tagging with version numbers that match roadmap
 
@@ -15,11 +14,6 @@
     - ~~nixos-installer~~
     - bootstrap script - TESTING
     - ~~complete migration to granular secrets files~~
-- Consider nixifying bash scripts (see refs below)
-- Overhaul just file
-  - clean up
-  - add {{just.executable()}} to just entries
-- explore direnv
 
 #### General workflow improvements
 
@@ -187,25 +181,14 @@ Some of the original parts of this stage have been split off to later stages bec
 - ~~Refactor from configVars to modularized hostSpec~~
 - ~~Re-implement modules to make use of options for enablement~~ deferred, nice to have
 
-##### 5.2 script cleaning
+##### 5.2 bootstrap fix
 
-- Revise bootstrap script
-- Consider nixifying bash scripts (see refs below)
-- Overhaul just file
-  - clean up
-  - add {{just.executable()}} to just entries
-  - explore direnv
+- Revise bootstrap script and roll in granular secrets hierarchy
 
 ##### 5.x Extras
 
 - ~~move Gusto to disko~~~
 - revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
-
-##### Stage 5 references
-
-Migrating bash scripts to nix
-- https://www.youtube.com/watch?v=diIh0P12arA and https://www.youtube.com/watch?v=qRE6kf30u4g
-- Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
 
 #### 6. Laptops
 
@@ -213,6 +196,7 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 
 - nixify genoa
 - add laptop utils
+- declarative wifi network handling
 
 #### 7. Impermanence and Lanzaboote
 
@@ -233,6 +217,13 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 - https://github.com/ElvishJerricco/stage1-tpm-tailscale
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
 
+##### 7.3 Cleaning - Nice to Have
+
+- Consider nixifying bash scripts (see refs below)
+- Overhaul just file
+  - clean up
+  - add {{just.executable()}} to just entries
+
 ##### Stage 7 references
 
 Impermanence - These two are the references to follow and integrate. The primer list below is good review before diving into this:
@@ -249,6 +240,10 @@ Impermanence primer info
 - [blog - tmpfs as root](https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/)
 - [blog - tmpfs as home](https://elis.nu/blog/2020/06/nixos-tmpfs-as-home/)
 
+Migrating bash scripts to nix
+- https://www.youtube.com/watch?v=diIh0P12arA and https://www.youtube.com/watch?v=qRE6kf30u4g
+- Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
+
 #### 8. Improving remote
 
 ##### 8.1 automate config deployment
@@ -264,7 +259,6 @@ The following has to happen on bare metal because I can't seem to get the yubike
 - Remote LUKS decrypt over ssh for headless hosts
   - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
   - add initrd-ssh module that will spawn an ssh service for use during boot
-
 
 ##### 8.x Extras
 
