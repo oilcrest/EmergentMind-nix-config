@@ -2,6 +2,7 @@
 
 {
   pkgs,
+  lib,
   inputs,
   config,
   ...
@@ -33,33 +34,36 @@ in
   # the user doesn't have read permission for the ssh service private key. However, we can bootstrap the age key from
   # the secrets decrypted by the host key, which allows home-manager secrets to work without manually copying over
   # the age key.
-  sops.secrets = {
-    # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived
-    # from an ssh key).
+  sops.secrets = lib.mkMerge [
+    {
+      # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived
+      # from an ssh key).
 
-    # FIXME(starter-repo):
-    #    "keys/age/${config.hostSpec.username}_${config.networking.hostName}" = {
-    "keys/age" = {
-      owner = config.users.users.${config.hostSpec.username}.name;
-      inherit (config.users.users.${config.hostSpec.username}) group;
-      # We need to ensure the entire directory structure is that of the user...
-      path = "${config.hostSpec.home}/.config/sops/age/keys.txt";
-    };
-    # extract password/username to /run/secrets-for-users/ so it can be used to create the user
-    "passwords/${config.hostSpec.username}" = {
-      sopsFile = "${sopsFolder}/shared.yaml";
-      neededForUsers = true;
-    };
-    "passwords/msmtp" = { };
-    # borg password required by nix-config/modules/nixos/backup
-    "passwords/borg" = {
-      owner = "root";
-      group = if pkgs.stdenv.isLinux then "root" else "wheel";
-      mode = "0600";
-      path = "/etc/borg/passphrase";
-    };
-
-  };
+      # FIXME(starter-repo):
+      #    "keys/age/${config.hostSpec.username}_${config.networking.hostName}" = {
+      "keys/age" = {
+        owner = config.users.users.${config.hostSpec.username}.name;
+        inherit (config.users.users.${config.hostSpec.username}) group;
+        # We need to ensure the entire directory structure is that of the user...
+        path = "${config.hostSpec.home}/.config/sops/age/keys.txt";
+      };
+      # extract password/username to /run/secrets-for-users/ so it can be used to create the user
+      "passwords/${config.hostSpec.username}" = {
+        sopsFile = "${sopsFolder}/shared.yaml";
+        neededForUsers = true;
+      };
+      "passwords/msmtp" = { };
+    }
+    # only reference borg password if host is using backup
+    (lib.mkIf config.services.backup.enable {
+      "passwords/borg" = {
+        owner = "root";
+        group = if pkgs.stdenv.isLinux then "root" else "wheel";
+        mode = "0600";
+        path = "/etc/borg/passphrase";
+      };
+    })
+  ];
   # The containing folders are created as root and if this is the first ~/.config/ entry,
   # the ownership is busted and home-manager can't target because it can't write into .config...
   # FIXME(sops): We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
