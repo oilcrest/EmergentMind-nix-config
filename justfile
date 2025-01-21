@@ -43,9 +43,6 @@ diff:
 age-key:
   nix-shell -p age --run "age-keygen"
 
-rekey:
-  cd ../nix-secrets && just rekey
-
 check-sops:
   scripts/check-sops.sh
 
@@ -70,16 +67,23 @@ disko DRIVE PASSWORD:
     --arg password '"{{PASSWORD}}"'
   rm /tmp/disko-password
 
-sync USER HOST:
-  rsync -av --filter=':- .gitignore' -e "ssh -l {{USER}}" . {{USER}}@{{HOST}}:nix-config/
+sync USER HOST PATH:
+	rsync -av --filter=':- .gitignore' -e "ssh -l {{USER}} -oport=22" . {{USER}}@{{HOST}}:{{PATH}}/nix-config
 
-sync-secrets USER HOST:
-  rsync -av --filter=':- .gitignore' -e "ssh -l {{USER}}" . {{USER}}@{{HOST}}:nix-secrets/
-
+build-host HOST:
+	NIX_SSHOPTS="-p22" nixos-rebuild --target-host {{HOST}} --use-remote-sudo --show-trace --impure --flake .#"{{HOST}}" switch
 
 #
 # ========== Nix-Secrets manipulation recipes ==========
 #
+
+# Update all keys in sops/*.yaml files in nix-secrets to match the creation rules keys
+rekey:
+  cd ../nix-secrets && for file in $(ls sops/*.yaml); do \
+    sops updatekeys -y $file; \
+  done && \
+    (pre-commit run --all-files || true) && \
+    git add -u && (git commit -nm "chore: rekey" || true) && git push
 
 # Update an age key anchor or add a new one
 update-age-key FIELD KEYNAME KEY:
