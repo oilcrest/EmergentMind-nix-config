@@ -112,10 +112,8 @@ in
       ts = "cd $HOME/.talon/user/fidget";
       src = "cd $HOME/src";
       edu = "cd $HOME/src/edu";
-      dfs = "cd $HOME/src/dotfiles";
-      dfsw = "cd $HOME/src/dotfiles.wiki";
-      nfs = "cd $HOME/nix-config";
-      uc = "cd $HOME/src/unmovedcentre";
+      wiki = "cd $HOME/sync/obsidian-vault-01/wiki";
+      uc = "cd $HOME/src/unmoved-centre";
       l = "eza -lah";
       la = "eza -lah";
       ll = "eza -lh";
