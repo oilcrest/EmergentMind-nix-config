@@ -52,7 +52,9 @@ in
         sopsFile = "${sopsFolder}/shared.yaml";
         neededForUsers = true;
       };
-      "passwords/msmtp" = { };
+      "passwords/msmtp" = {
+        sopsFile = "${sopsFolder}/shared.yaml";
+      };
     }
     # only reference borg password if host is using backup
     (lib.mkIf config.services.backup.enable {
