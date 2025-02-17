@@ -53,6 +53,7 @@
       nixosConfigurations = {
         # host = newConfig "name" disk" "swapSize" "useLuks"
         # Swap size is in GiB
+        genoa = newConfig "genoa" "/dev/nvme0n1" 16 true;
         grief = newConfig "grief" "/dev/vda" 0 false;
         guppy = newConfig "guppy" "/dev/vda" 0 false;
         gusto = newConfig "gusto" "/dev/nvme0n1" 8 false;
