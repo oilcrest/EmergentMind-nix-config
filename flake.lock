@@ -561,10 +561,10 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1739644355,
-        "narHash": "sha256-GEEDSgqI5IGtZSXxSN/ZftgtjQq2DYAvcR3LeCI+dgU=",
+        "lastModified": 1739824154,
+        "narHash": "sha256-zQIZtMSVMLdEOMObhnqOYmfGYhK1u1fw3r9frsrCa7A=",
         "ref": "main",
-        "rev": "7591fc642fd0cd634f84e8e6dfb7f4d9b3300a04",
+        "rev": "2727cfebd82cdad0c27dd128be25d9f16f62751f",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
